@@ -38,8 +38,6 @@ const InformationScreen = ({navigation}) => {
 
   const [data, setData] = useState(placebodata);
       
-  
-
   return (
     <View style={styles.container}>
       <Text>Information Screen</Text>
