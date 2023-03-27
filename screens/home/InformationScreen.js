@@ -26,7 +26,7 @@ const placebodata = {
       strokeWidth: 2 // optional
     }
   ],
-  legend: ["Rainy Days"] // optional
+  legend: ["Whole hour"] // optional
 }
 
 const InformationScreen = ({navigation}) => {
@@ -81,12 +81,12 @@ const InformationScreen = ({navigation}) => {
       </Button>
 
       <Button
-      title="Console log debug"
+      title="Console debug 1"
       onPress={() => 
         console.log(placebodata.datasets[0].data)}>
       </Button>
       <Button
-      title="Create random data"
+      title="Console debug 2"
       onPress={() => 
         console.log()}>
       </Button>
