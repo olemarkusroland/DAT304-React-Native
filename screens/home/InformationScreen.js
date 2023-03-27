@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, Button, Dimensions,} from 'react-native';
 import {
   LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart
@@ -37,31 +37,7 @@ const InformationScreen = ({navigation}) => {
   }
 
   const [data, setData] = useState(placebodata);
-  useEffect(() => {
-      const fetchData = async () => {
-        const response = await fetch('data.json');
-        const json = await response.json();
-        setData({
-          labels: json.labels.map((label) => {
-            const date = new Date(label);
-            return `${date.getHours()}:${date.getMinutes()}`;
-          }),
-          datasets: [
-            {
-              ...data.datasets[0],
-              data: json.data,
-            },
-          ],
-        });
-      };
-      fetchData();
-
-      const interval = setInterval(() => {
-        fetchData();
-      }, 300000); // 5 minutes
-
-      return () => clearInterval(interval);
-    }, []);
+      
   
 
   return (
