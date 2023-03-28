@@ -4,13 +4,7 @@ import {
   LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart
 } from "react-native-chart-kit";
 import moment from 'moment';
-/*
-  const fetchData = useCallback(async () => {
-  const data = await fetch('https://yourapi.com');
 
-  setData(data);
-  }, []) 
-*/
 const placebodata = {
   labels: [
   '2022-01-01T00:00:00Z', 
@@ -31,12 +25,33 @@ const placebodata = {
 
 const InformationScreen = ({navigation}) => {
 
+  const [data, setData] = useState(placebodata);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newData = require('./data.json');
+      // Update the labels with the current time in 5-minute intervals
+      const newLabels = Array.from({ length: 12 }, (_, i) => {
+        const time = moment().add(5 * i, 'minutes').format();
+        return time;
+      });
+      setData({
+        labels: newLabels,
+        datasets: [
+          {
+            data: newData,
+            color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`,
+            strokeWidth: 2
+          }
+        ],
+        legend: ["Whole hour"]
+      });
+    }, 10000); // 10s in milliseconds
+    return () => clearInterval(interval);
+  }, []);
   const formatXLabel = (value) => {
-    // Convert UTC time to local time using moment.js
     return moment.utc(value).local().format('LT');
   }
-
-  const [data, setData] = useState(placebodata);
       
   return (
     <View style={styles.container}>
@@ -92,7 +107,6 @@ const InformationScreen = ({navigation}) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
