@@ -1,11 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-
+import { View, Text, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import InformationChart from '../../components/infograph';
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text>Home Screen</Text>
-
+      <TouchableOpacity
+      onPress= {() =>
+        navigation.navigate("TabNavigator", {screen: "Information"})}>
+        <InformationChart></InformationChart>
+      </TouchableOpacity>
       <Button
       title="Go to Food"
       onPress={() => 

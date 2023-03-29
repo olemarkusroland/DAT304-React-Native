@@ -14,7 +14,7 @@ const FoodScreen = ({navigation}) => {
         keyExtractor={(item) => item.id}
       />
       <Button
-      title="Go to Home"
+      title="Home"
       onPress={() => 
         navigation.navigate("TabNavigator", {screen: "Home"})}>
       </Button>

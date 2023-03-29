@@ -21,29 +21,47 @@ export const renderFoodItem = ({ item }) => {
   };
 
   export const food_styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      marginTop: 'auto',
+      padding: 0,
+      marginBottom: 175,
+    },
     foodItem: {
       flexDirection: 'row',
+      flex: 1,
       alignItems: 'center',
       padding: 10,
       borderBottomWidth: 1,
       borderBottomColor: '#ddd',
+      margin: 'auto',
     },
     titleText: {
       fontSize: 26,
       textAlign: 'center',
+      borderBottomWidth: 1,
+      borderBottomColor: '#ddd',
     },
     foodName: {
+      flex: 1,
       marginLeft: 10,
       fontSize: 18,
+      textAlign: 'left',
+      alignItems: 'center',
+      marginLeft: 'auto',
     },
     calories: {
+      flex: 1,
       marginLeft: 'auto',
       fontSize: 18,
       alignItems: 'center',
       textAlign: 'center',
     },
     timestamp: {
+      flex: 1,
       marginLeft: 'auto',
       color: '#666',
+      alignItems: 'center',
+      textAlign: 'center',
     },
   });
