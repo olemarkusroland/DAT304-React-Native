@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, StyleSheet, Button, Dimensions,} from 'react-native';
+import { View, Text, StyleSheet, Button, Dimensions, FlatList} from 'react-native';
 import {
   LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart
 } from "react-native-chart-kit";
 import moment from 'moment';
+import {foodlist, renderFoodItem, food_styles} from '../../components/foodlist';
+
 
 const placebodata = {
   labels: [
@@ -56,7 +58,6 @@ const InformationScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text>Information Screen</Text>
-      <Text>Bezier Line Chart</Text>
       <LineChart
         data={data}
         width={Dimensions.get("window").width} // from react-native
@@ -87,22 +88,22 @@ const InformationScreen = ({navigation}) => {
         }}
       />
 
+      <View style={food_styles.container}>
+      <Text style={food_styles.titleText}>Recently Eaten Food</Text>
+      <FlatList
+        data={foodlist}
+        renderItem={renderFoodItem}
+        keyExtractor={(item) => item.id}
+      />
+      </View>
+
       <Button
       title="Go back"
       onPress={() => 
         navigation.navigate("TabNavigator", {screen: "Home"})}>
       </Button>
 
-      <Button
-      title="Console debug 1"
-      onPress={() => 
-        console.log(placebodata.datasets[0].data)}>
-      </Button>
-      <Button
-      title="Console debug 2"
-      onPress={() => 
-        console.log()}>
-      </Button>
+
 
     </View>
   );
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: 'auto',
   },
 });
 

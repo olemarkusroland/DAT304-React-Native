@@ -7,9 +7,9 @@ const HomeScreen = ({ navigation }) => {
       <Text>Home Screen</Text>
 
       <Button
-      title="Go to Profile"
+      title="Go to Food"
       onPress={() => 
-        navigation.navigate("TabNavigator", {screen: "Profile"})}>
+        navigation.navigate("TabNavigator", {screen: "Food"})}>
       </Button>
     
       <Button
