@@ -1,18 +1,21 @@
-import React, {useContext, useState} from 'react'
-import {KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
-import {AuthenticationContext} from "../../../services/Auth/Auth-Context";
+import React, {useContext, useState} from 'react';
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {AuthenticationContext} from '../../../services/Auth/Auth-Context';
 
-
-export const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const { onLogin, error } = useContext(AuthenticationContext);
+export const LoginScreen = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const {onLogin, error} = useContext(AuthenticationContext);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior="padding"
-    >
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
@@ -31,36 +34,34 @@ export const LoginScreen = ({ navigation }) => {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          onPress={() => onLogin(email,password)}
+          onPress={() => onLogin(email, password)}
           style={styles.button}
-          title={'Login'}
-        ><Text>Login</Text>
+          title={'Login'}>
+          <Text>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.button}
-            title={'Back'}
-        ><Text>Back</Text>
+          onPress={() => navigation.goBack()}
+          style={styles.button}
+          title={'Back'}>
+          <Text>Back</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
-  )
-}
+  );
+};
 
-export default LoginScreen
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFEEEE'
-
+    backgroundColor: '#FFEEEE',
   },
 
-
   inputContainer: {
-    width: '80%'
+    width: '80%',
   },
   input: {
     backgroundColor: '#EBD8C3',
@@ -68,7 +69,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
     marginTop: 5,
-
   },
   buttonContainer: {
     width: '60%',
@@ -99,4 +99,4 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 16,
   },
-})
+});

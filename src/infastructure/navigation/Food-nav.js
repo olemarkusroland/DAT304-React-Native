@@ -2,14 +2,12 @@ import React from 'react';
 
 import {createStackNavigator} from '@react-navigation/stack';
 
-import {FoodScreen} from '../../Features/Room/Screen/FoodScreen';
-import {FoodDetailScreen} from '../../Features/Room/Screen/FoodDetailScreen';
-import {Add_RoomScreen} from '../../Features/Room/Screen/Add_Room';
-import {Delete_RoomScreen} from '../../Features/Room/Screen/Delete_Room';
+import {FoodScreen} from '../../Features/Food/Screen/FoodScreen';
+import {FoodDetailScreen} from '../../Features/Food/Screen/FoodDetailScreen';
 
 const RoomStack = createStackNavigator();
 
-export const RoomsNavigator = () => {
+export const FoodsNavigator = () => {
   return (
     <RoomStack.Navigator>
       <RoomStack.Screen
@@ -17,36 +15,18 @@ export const RoomsNavigator = () => {
           header: () => null,
 
           headerStyle: {
-            backgroundColor: '#F7E9D7',
+            backgroundColor: 'white',
           },
         }}
-        name="Rooms"
+        name="Food"
         component={FoodScreen}
       />
       <RoomStack.Screen
-        name="RoomDetail"
+        name="FoodDetail"
         component={FoodDetailScreen}
         options={{
           headerStyle: {
-            backgroundColor: '#F7E9D7',
-          },
-        }}
-      />
-      <RoomStack.Screen
-        name="AddRoom"
-        component={Add_RoomScreen}
-        options={{
-          headerStyle: {
-            backgroundColor: '#F7E9D7',
-          },
-        }}
-      />
-      <RoomStack.Screen
-        name="DeleteRoom"
-        component={Delete_RoomScreen}
-        options={{
-          headerStyle: {
-            backgroundColor: '#F7E9D7',
+            backgroundColor: 'white',
           },
         }}
       />

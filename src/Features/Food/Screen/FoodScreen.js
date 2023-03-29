@@ -1,34 +1,35 @@
-import React, {useContext} from 'react';
-import {ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useCallback, useContext} from 'react';
+import {FlatList, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import {FoodInfo} from '../Component/FoodInfo';
 import {FoodContext} from '../../../services/Foods/Food-Context';
 import {Search} from '../Component/Search';
 
 export const FoodScreen = ({navigation}) => {
-  const {foods} = useContext(FoodContext);
+  const {foods, isLoading} = useContext(FoodContext);
+  const listHeaderComponent = <Search />;
 
-  return (
-    <ScrollView style={local.dashboard}>
-      <Search />
-      {foods.map((post, i) => (
+  const renderFood = useCallback(
+    ({item}) => {
+      return (
         <TouchableOpacity
-          key={i}
           onPress={() => {
-            if (post && post.name) {
-              navigation.navigate('FoodDetail', {food: post});
+            if (item && item.name && item.carbs) {
+              navigation.navigate('FoodDetail', {food: item});
             }
           }}>
-          {post && post.name ? <FoodInfo food={post} /> : null}
+          {item && item.name && item.carbs ? <FoodInfo food={item} /> : null}
         </TouchableOpacity>
-      ))}
-    </ScrollView>
+      );
+    },
+    [navigation],
+  );
+
+  return (
+    <FlatList
+      data={foods}
+      renderItem={renderFood}
+      keyExtractor={item => item.id.toString()}
+      ListHeaderComponent={listHeaderComponent}
+    />
   );
 };
-
-const local = StyleSheet.create({
-  dashboard: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#FFEEEE',
-  },
-});
