@@ -26,7 +26,7 @@ export const useInsulinData = async (from, to ) => {
         console.error(error);
         throw error;
     }
-    
+
 };
 
 export function CurrentTime(){
@@ -45,7 +45,7 @@ export function CurrentTime(){
     //if (second < 10) { second = '0' + second }
 
     const formattedDate = `${year}-${month}-${day}:${hour}:${minute}:${second}`;
-    
+
     return formattedDate;
 };
 
@@ -58,8 +58,8 @@ export function LastMonthTime (){
     const hours = String(date.getHours()).padStart(2, '0'); // add leading zero if hours < 10
     const minutes = String(date.getMinutes()).padStart(2, '0'); // add leading zero if minutes < 10
     const seconds = String(date.getSeconds()).padStart(2, '0'); // add leading zero if seconds < 10
-    const formattedDate = `${year}-${month}-${day}:${hours}:${minutes}:${seconds}`; 
-    
+    const formattedDate = `${year}-${month}-${day}:${hours}:${minutes}:${seconds}`;
+
     return formattedDate;
 };
 //export const CurrentTime = () => {

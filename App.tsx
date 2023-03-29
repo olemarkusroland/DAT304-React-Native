@@ -8,12 +8,14 @@ import './backend/realm/testCRUD.js';
 
 const App = () => {
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <Text>Hello World!</Text>
-        </SafeAreaView>
-    );
-};
+
+  return (
+    <View style={{flex: 1}}>
+      <AuthenticationContextProvider>
+        <Navigation />
+      </AuthenticationContextProvider>
+    </View>
+  );
 
 async function callAll() {
     await updateGlucose();

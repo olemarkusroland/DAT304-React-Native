@@ -1,19 +1,23 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
-export const FoodInfo = ({food}) => {
+// Wrap your FoodInfo component with React.memo
+export const FoodInfo = React.memo(function FoodInfo({food}) {
+  // Your existing FoodInfo component implementation
+
+  console.log(food.carbs);
   return (
     <View style={styles.container}>
       <Text style={styles.name}>{food.name}</Text>
-      <Text style={styles.description}>{food.description}</Text>
+      <Text style={styles.description}>{food.carbs}</Text>
       {/* Add more fields from the mock data if needed */}
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'white',
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
@@ -25,6 +29,6 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: '#666666',
+    color: 'white',
   },
 });
