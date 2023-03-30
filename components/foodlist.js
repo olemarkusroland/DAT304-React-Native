@@ -41,6 +41,7 @@ export const renderFoodItem = ({ item }) => {
       textAlign: 'center',
       borderBottomWidth: 1,
       borderBottomColor: '#ddd',
+      padding: 10,
     },
     foodName: {
       flex: 1,
