@@ -8,6 +8,8 @@ import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 
 import Foods from '../../../assets/Foods.png';
 import settings from '../../../assets/settings.png';
+import { HomeNavigator } from './home-navigation';
+import { InformationNavigator } from './glucose-nav';
 
 export const Tab = createBottomTabNavigator();
 
@@ -26,6 +28,8 @@ export const Icons = ({iconName, size, color}) => (
 export const TABICON = {
   Foods: 'md-basket-outline', // Update this line
   Settings: 'md-settings-outline', // Update this line
+  Home: 'md-home-outline', // Update this line
+  Information: 'md-settings-outline', // Update this line
 };
 
 export const createScreenOptions = ({route}) => {
@@ -52,6 +56,9 @@ export const AppNavigator = () => (
       <Tab.Navigator screenOptions={createScreenOptions}>
         <Tab.Screen name="Foods" component={FoodsNavigator} />
         <Tab.Screen name="Settings" component={SettingsNavigator} />
+        <Tab.Screen name="Home" component={HomeNavigator} />
+        <Tab.Screen name="Info" component={InformationNavigator} />
+
       </Tab.Navigator>
     </FoodContextProvider>
   </PaperProvider>
