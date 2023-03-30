@@ -1,26 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import InformationChart from '../../components/infograph';
-const HomeScreen = ({ navigation }) => {
+
+export const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text>Home Screen</Text>
-      <TouchableOpacity
-      onPress= {() =>
-        navigation.navigate("TabNavigator", {screen: "Information"})}>
+      <TouchableOpacity>
         <InformationChart></InformationChart>
       </TouchableOpacity>
-      <Button
-      title="Go to Food"
-      onPress={() => 
-        navigation.navigate("TabNavigator", {screen: "Food"})}>
-      </Button>
-    
-      <Button
-      title="Information"
-      onPress={() => 
-        navigation.navigate("TabNavigator", {screen: "Information"})}>
-      </Button>
     </View>
   );
 };
@@ -33,4 +21,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
