@@ -1,50 +1,24 @@
-import React, { useEffect, useMemo } from 'react';
-import { SafeAreaView, StyleSheet, Text} from 'react-native';
-import { useGlucoseData, useInsulinData, CurrentTime, LastMonthTime } from './nightscoutAPI.js';
-import {
-    updateGlucose,
-    updateInsulin,
-    readLatestInsulin,
-    readLatestGlucose,
-    useTimer,
-    realmOpen,
-    isRealmFileExists,
-    getRealmPath,
-    isRealmEmpty,
-} from './realmData.js'
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, StyleSheet, Text } from 'react-native';
+import { realmOpen, isRealmEmpty } from './backend/realm/utils.js'
+import { updateGlucose } from './backend/realm/CRUD.js';
+import { BackgroundTest } from './backend/background-fetch.js';
+
+import './backend/realm/testCRUD.js';
 
 const App = () => {
-    const from = useMemo(() => new Date('2023-01-28:00:00:00'), []);
-    const to = useMemo(() => new Date('2023-02-01:00:00:00'), []);
 
-   //const response = CurrentTime();
-    //const response = useInsulinData({ from, to });
-    //console.log(response);
-    //isOpenEmpty();
-    //addPerson(4, 'John Doe', "ema@gma.com", 30);
-    //const lol = getUserById(4);
-    //getAllUsers();
-    
-    callALL();
-    
-    //const currentTime = CurrentTime();
-    //const formattedNow = currentTime.toLocaleString();
-    
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.text}>Hello, world!</Text>
+            <Text>Hello World!</Text>
         </SafeAreaView>
     );
 };
 
-
-async function callALL() {
-   await updateGlucose();
-   // await updateInsulin();
-    await countInsulin();
+async function callAll() {
+    await updateGlucose();
+    await countGlucose();
 }
-
-
 
 async function getUserById(id: number) {
     const realm = await realmOpen();
@@ -66,13 +40,13 @@ async function getAllUsers() {
     console.log('All users:', users);
     return users;
 }
-async function countInsulin() {
+
+async function countGlucose() {
     const realm = await realmOpen();
+    const glucoses = realm.objects('GlucoseInfo');
 
-    const insulins = realm.objects('GlucoseInfo');
-
-    console.log(`There are ${insulins.length} entries in the Realm file.`);
-    return insulins.length;
+    console.log(`There are ${glucoses.length} entries in the Realm file.`);
+    return glucoses.length;
 }
 
 async function isOpenEmpty() {
@@ -96,14 +70,6 @@ async function addPerson(id: number, name: string, email: string, age: number) {
     console.log('Person added to the Realm file');
 }
 
-
-function lol() {
-    const currentTime = new Date();
-
-    const formattedTime = `${currentTime.getFullYear()}-${currentTime.getMonth() + 1}-${currentTime.getDate()}:${currentTime.getHours()}:${currentTime.getMinutes()}:${currentTime.getSeconds()}`;
-
-    return formattedTime;
-}
 const styles = StyleSheet.create({
     container: {
         flex: 1,

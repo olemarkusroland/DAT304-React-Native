@@ -1,10 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\android",
-    "\\android\\app",
-    "\\android\\app\\src",
-    "\\android\\app\\src\\main"
+    "\\backend"
   ],
+  "SelectedNode": "\\App.tsx",
   "PreviewInSolutionExplorer": false
 }

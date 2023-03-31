@@ -61,3 +61,12 @@ yarn-error.log
 
 # Temporary files created by Metro to check the health of the file watcher
 .metro-health-check*
+
+# Other
+script.bat
+my.realm.management/
+*.eslintrc.js
+*.prettierrc.js
+*.ruby-version
+*.watchmanconfig
+*.node-version

@@ -1,8 +1,3 @@
-import { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-
-
-
 export const useGlucoseData = async (from, to) => {
     try {
         //console.log(from + " ___ " + to + "---->" + `https://oskarnightscoutweb1.azurewebsites.net/api/v1/entries/sgv.json?find[dateString][$gte]=${from}&find[dateString][$lte]=${to}&count=all`);
@@ -17,8 +12,6 @@ export const useGlucoseData = async (from, to) => {
         throw error;
     }
 };
-
-
 
 export const useInsulinData = async (from, to ) => {
     try {
