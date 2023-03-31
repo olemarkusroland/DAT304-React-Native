@@ -6,7 +6,9 @@ export const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text>Home Screen</Text>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => 
+          navigation.navigate('Info')}>
         <InformationChart></InformationChart>
       </TouchableOpacity>
     </View>
