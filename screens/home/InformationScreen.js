@@ -31,7 +31,7 @@ const InformationScreen = ({navigation}) => {
       <View style={food_styles.container}>
       <TouchableOpacity style={{borderRadius: 5, borderColor: '#ddd', flex: 1, backgroundColor: '#ddd'}}
         onPress={() => 
-        navigation.navigate("TabNavigator", {screen: "Food"})}>
+        navigation.navigate('RecentFood')}>
         <Text style={food_styles.titleText}>Recently Eaten Food</Text>
         <FlatList
           data={foodlist}

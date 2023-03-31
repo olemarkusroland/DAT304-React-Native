@@ -54,10 +54,10 @@ export const AppNavigator = () => (
   <PaperProvider theme={theme}>
     <FoodContextProvider>
       <Tab.Navigator screenOptions={createScreenOptions}>
-        <Tab.Screen name="Foods" component={FoodsNavigator} />
-        <Tab.Screen name="Settings" component={SettingsNavigator} />
         <Tab.Screen name="Home" component={HomeNavigator} />
         <Tab.Screen name="Info" component={InformationNavigator} />
+        <Tab.Screen name="Foods" component={FoodsNavigator} />
+        <Tab.Screen name="Settings" component={SettingsNavigator} />
 
       </Tab.Navigator>
     </FoodContextProvider>

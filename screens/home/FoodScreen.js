@@ -3,7 +3,7 @@ import { View, Text, Button, FlatList, } from 'react-native';
 import {foodlist, renderFoodItem, food_styles} from '../../components/foodlist';
 
 
-const FoodScreen = ({navigation}) => {
+const RecentFoodScreen = ({navigation}) => {
 
   return (
     <View style={food_styles.container}>
@@ -13,15 +13,8 @@ const FoodScreen = ({navigation}) => {
         renderItem={renderFoodItem}
         keyExtractor={(item) => item.id}
       />
-      <Button
-      title="Home"
-      onPress={() => 
-        navigation.navigate("TabNavigator", {screen: "Home"})}>
-      </Button>
-
-
     </View>
   );
 };
 
-export default FoodScreen;
+export default RecentFoodScreen;
