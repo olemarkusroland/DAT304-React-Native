@@ -29,7 +29,7 @@ export const TABICON = {
   Foods: 'md-basket-outline', // Update this line
   Settings: 'md-settings-outline', // Update this line
   Home: 'md-home-outline', // Update this line
-  Information: 'md-settings-outline', // Update this line
+  Info: 'md-information-circle-outline', // Update this line
 };
 
 export const createScreenOptions = ({route}) => {
@@ -55,10 +55,9 @@ export const AppNavigator = () => (
     <FoodContextProvider>
       <Tab.Navigator screenOptions={createScreenOptions}>
         <Tab.Screen name="Home" component={HomeNavigator} />
-        <Tab.Screen name="Info" component={InformationNavigator} />
         <Tab.Screen name="Foods" component={FoodsNavigator} />
+        <Tab.Screen name="Info" component={InformationNavigator} />
         <Tab.Screen name="Settings" component={SettingsNavigator} />
-
       </Tab.Navigator>
     </FoodContextProvider>
   </PaperProvider>
