@@ -12,8 +12,7 @@ import {FoodContext} from '../../../services/Foods/Food-Context';
 import {Search} from '../Component/Search';
 
 export const FoodScreen = ({navigation}) => {
-  const {foods, isLoading, addToSelectedFoods, selectedFoods} =
-    useContext(FoodContext);
+  const {foods, selectedFoods} = useContext(FoodContext);
   const listHeaderComponent = <Search />;
 
   const renderFood = useCallback(

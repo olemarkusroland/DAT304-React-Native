@@ -19,7 +19,11 @@ export const FoodDetailScreen = ({route, navigation}) => {
   const [grams, setGrams] = useState(0);
 
   const addToSelectedFoods = () => {
-    addDistinctFood({...food, grams: Number(grams)});
+    const selectedFood = {
+      ...food,
+      grams: Number(grams),
+    };
+    addDistinctFood(selectedFood);
     navigation.goBack();
   };
 
@@ -33,8 +37,8 @@ export const FoodDetailScreen = ({route, navigation}) => {
       <TextInput
         style={styles.input}
         keyboardType="number-pad"
-        onChangeText={text => setGrams(text)}
-        value={grams}
+        onChangeText={text => setGrams(Number(text))}
+        value={grams.toString()}
       />
       <Button title="Add to list" onPress={addToSelectedFoods} />
     </View>

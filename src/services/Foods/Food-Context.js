@@ -14,10 +14,19 @@ export const FoodContextProvider = ({children}) => {
 
   const addDistinctFood = food => {
     setSelectedFoods(prevSelectedFoods => {
-      if (prevSelectedFoods.some(f => f.name === food.name)) {
-        return prevSelectedFoods;
+      const foodIndex = prevSelectedFoods.findIndex(f => f.name === food.name);
+      if (foodIndex > -1) {
+        // Food already exists in selected foods, update its grams value
+        const updatedSelectedFoods = [...prevSelectedFoods];
+        updatedSelectedFoods[foodIndex] = {
+          ...updatedSelectedFoods[foodIndex],
+          grams: food.grams || 0,
+        };
+        return updatedSelectedFoods;
       } else {
-        return [...prevSelectedFoods, food];
+        // Food doesn't exist in selected foods, add it with default grams value of 0
+        const newFood = {...food, grams: food.grams || 0};
+        return [...prevSelectedFoods, newFood];
       }
     });
   };

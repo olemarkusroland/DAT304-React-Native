@@ -59,4 +59,24 @@ export const styles = StyleSheet.create({
     paddingRight: 10,
     height: 40,
   },
+
+  container2: {
+    backgroundColor: 'white',
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  description: {
+    fontSize: 14,
+    color: 'grey',
+  },
+  grams: {
+    fontSize: 14,
+    color: 'black',
+  },
 });
