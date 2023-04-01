@@ -1,8 +1,8 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import InformationScreen from '../../../screens/home/InformationScreen';
-import RecentFoodScreen from '../../../screens/home/FoodScreen';
+import InformationScreen from '../../Features/Home/Screen/InformationScreen';
+import RecentFoodScreen from '../../Features/Home/Screen/FoodScreen';
 const InformationStack = createStackNavigator();
 
 export const InformationNavigator = ({route, navigation}) => {
