@@ -5,11 +5,12 @@ import {View, Text, StyleSheet} from 'react-native';
 export const FoodInfo = React.memo(function FoodInfo({food}) {
   // Your existing FoodInfo component implementation
 
-  console.log(food.carbs);
   return (
     <View style={styles.container}>
       <Text style={styles.name}>{food.name}</Text>
       <Text style={styles.description}>{food.carbs}</Text>
+      <Text style={styles.name}>{food.grams} g</Text>
+
       {/* Add more fields from the mock data if needed */}
     </View>
   );

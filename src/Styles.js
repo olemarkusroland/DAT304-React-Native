@@ -45,4 +45,18 @@ export const styles = StyleSheet.create({
     top: -5,
     left: 5,
   },
+  label: {
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  input: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    paddingLeft: 10,
+    paddingRight: 10,
+    height: 40,
+  },
 });

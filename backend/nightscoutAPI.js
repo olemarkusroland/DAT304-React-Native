@@ -1,4 +1,4 @@
-export const useGlucoseData = async (from, to) => {
+export const UseGlucoseData = async (from, to) => {
   try {
     //console.log(from + " ___ " + to + "---->" + `https://oskarnightscoutweb1.azurewebsites.net/api/v1/entries/sgv.json?find[dateString][$gte]=${from}&find[dateString][$lte]=${to}&count=all`);
     const response = await fetch(
@@ -15,7 +15,7 @@ export const useGlucoseData = async (from, to) => {
     throw error;
   }
 };
-export const useInsulinData = async (from, to) => {
+export const UseInsulinData = async (from, to) => {
   try {
     //console.log(from + " ___ " + to + "---->" + `https://oskarnightscoutweb1.azurewebsites.net/api/v1/treatments.json?find[created_at][$gte]=${from}&find[created_at][$lte]=${to}&count=all`);
     const response = await fetch(

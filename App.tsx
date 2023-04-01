@@ -17,7 +17,7 @@ const App = () => {
     </View>
   );
 };
-async function callAll() {
+export async function callAll() {
   await updateGlucose();
   await countGlucose();
 }

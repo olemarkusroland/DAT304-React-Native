@@ -1,6 +1,9 @@
 // Function to get mock data
 
-export const GetFoodAsync = async () => {
+import {realmOpen} from '../../../backend/realm/utils';
+import {readFoods} from '../../../backend/realm/CRUD';
+
+export const GetFoodAsyncMock = async () => {
   // Create an array of mock foods
   const mockFoods = [
     {id: 1, name: 'Pizza', carbs: 30},
@@ -13,4 +16,15 @@ export const GetFoodAsync = async () => {
 
   // Return the mock foods
   return mockFoods;
+};
+
+export const GetFoodAsync = async () => {
+  // Create an array of mock foods
+
+  const realm = await realmOpen();
+  const foods = await readFoods(realm);
+  console.log('Retrieved food from DB', foods);
+
+  // Return the mock foods
+  return foods;
 };
