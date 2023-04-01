@@ -26,7 +26,7 @@ const InformationChart = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const newData = require('./data.json');
+      const newData = require('../../Home/Component/data.json');
       // Update the labels with the current time in 5-minute intervals
       const newLabels = Array.from({length: 6}, (_, i) => {
         const time = moment()

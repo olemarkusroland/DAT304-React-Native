@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, Button, TouchableOpacity} from 'react-native';
-import InformationChart from '../Component/infograph';
+import InformationChart from '../../Information/Component/infograph';
 
 export const HomeScreen = ({navigation}) => {
   return (
