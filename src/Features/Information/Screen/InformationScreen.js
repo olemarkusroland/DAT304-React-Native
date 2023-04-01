@@ -8,7 +8,11 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import {foodlist, renderFoodItem, food_styles} from '../Component/foodlist';
+import {
+  foodlist,
+  renderFoodItem,
+  food_styles,
+} from '../../Home/Component/foodlist';
 import InformationChart from '../Component/infograph';
 
 const placebodata = {
