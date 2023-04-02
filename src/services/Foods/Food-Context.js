@@ -31,6 +31,12 @@ export const FoodContextProvider = ({children}) => {
     });
   };
 
+  const removeSelectedFood = foodToRemove => {
+    setSelectedFoods(prevSelectedFoods =>
+      prevSelectedFoods.filter(food => food !== foodToRemove),
+    );
+  };
+
   // Function to add a food to the selected foods list
 
   useEffect(() => {
@@ -70,7 +76,8 @@ export const FoodContextProvider = ({children}) => {
         searchInstant: onSearchInstant,
         isLoading,
         selectedFoods,
-        addDistinctFood,
+        AddFood: addDistinctFood,
+        RemoveFood: removeSelectedFood,
       }}>
       {children}
     </FoodContext.Provider>

@@ -14,7 +14,7 @@ import {styles} from '../../../Styles';
 
 export const FoodEditScreen = ({route, navigation}) => {
   const {food} = route.params;
-  const {addDistinctFood} = useContext(FoodContext);
+  const {AddFood} = useContext(FoodContext);
   const [grams, setGrams] = useState(food.grams);
 
   const addToSelectedFoods = () => {
@@ -22,7 +22,7 @@ export const FoodEditScreen = ({route, navigation}) => {
       ...food,
       grams: Number(grams),
     };
-    addDistinctFood(selectedFood);
+    AddFood(selectedFood);
     navigation.goBack();
   };
 
