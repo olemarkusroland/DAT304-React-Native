@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, ScrollView } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {realmOpen, isRealmEmpty} from './backend/realm/utils.js';
+import {updateGlucose} from './backend/realm/CRUD.js';
+import {BackgroundTest} from './backend/background-fetch.js';
 
-import { readFoods } from './backend/realm/CRUD';
-
-import { realmOpen } from './backend/realm/utils';
 
 //import './backend/realm/testCRUD.js';
 
@@ -14,29 +14,18 @@ interface FoodType {
     protein: number;
     fat: number;
 }
+import './backend/realm/testCRUD.js';
+import {AuthenticationContextProvider} from './src/services/Auth/Auth-Context.js';
+import {Navigation} from './src/infastructure/navigation/index.js';
 
 const App = () => {
-    const [foods, setFoods] = useState<FoodType[]>([]);
-
-    useEffect(() => {
-        (async () => {
-            const realm = await realmOpen();
-            const allFoods = await readFoods(realm);
-            setFoods(allFoods || []);
-        })();
-    }, []);
-
-    return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView>
-                {foods.map((food, index) => (
-                    <Text key={index} style={styles.text}>
-                        {food.name}: {food.calories} cals, {food.carbohydrates}g carbs, {food.protein}g prot, {food.fat}g fat
-                    </Text>
-                ))}
-            </ScrollView>
-        </SafeAreaView>
-    );
+  return (
+    <View style={{flex: 1}}>
+      <AuthenticationContextProvider>
+        <Navigation />
+      </AuthenticationContextProvider>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
