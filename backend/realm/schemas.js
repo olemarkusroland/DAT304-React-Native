@@ -1,17 +1,26 @@
 import Realm from 'realm';
 
-const User = {
-    name: "User",
-    properties: {
-        id: "int",
-        name: "string",
-        email: "string",
-        Age: "int",
-    },
-    primaryKey: "id",
-};
+export class GlucoseInfo extends Realm.Object {
+    static schema = {
+        name: 'GlucoseInfo',
+        properties: {
+            glucose: 'float',
+            timestamp: 'date',
+        },
+    };
+}
 
-class Food extends Realm.Object {
+export class InsulinInfo extends Realm.Object {
+    static schema = {
+        name: 'InsulinInfo',
+        properties: {
+            insulin: 'float',
+            timestamp: 'date',
+        },
+    };
+}
+
+export class Food extends Realm.Object {
     static schema = {
         name: "Food",
         properties: {
@@ -25,28 +34,31 @@ class Food extends Realm.Object {
     };
 }
 
-class FoodEntry extends Realm.Object {
+export class FoodEntry extends Realm.Object {
     static schema = {
         name: "FoodEntry",
         properties: {
+            _id: "int",
             food: "Food",
             amount: "float",
-            inMeal: { type: 'bool', default: false },
         },
+        primaryKey: "_id",
     };
 }
 
-class Meal extends Realm.Object {
+export class Meal extends Realm.Object {
     static schema = {
         name: "Meal",
         properties: {
+            _id: "int",
             timestamp: "string",
             entries: "FoodEntry[]",
         },
+        primaryKey: "_id",
     };
 }
 
-class Configuration extends Realm.Object {
+export class Configuration extends Realm.Object {
     static schema = {
         name: "Configuration",
         properties: {
@@ -59,7 +71,7 @@ class Configuration extends Realm.Object {
     };
 }
 
-class ExercicesInfo extends Realm.Object {
+export class ExercicesInfo extends Realm.Object {
     static schema = {
         name: 'ExercicesInfo',
         properties: {
@@ -69,33 +81,13 @@ class ExercicesInfo extends Realm.Object {
     };
 }
 
-class GlucoseInfo extends Realm.Object {
-    static schema = {
-        name: 'GlucoseInfo',
-        properties: {
-            glucose: 'float',
-            timestamp: 'date',
-        },
-    };
-}
-
-class InsulinInfo extends Realm.Object {
-    static schema = {
-        name: 'InsulinInfo',
-        properties: {
-            insulin: 'float',
-            timestamp: 'date',
-        },
-    };
-}
-
-export {
-    User,
-    Food,
-    FoodEntry,
-    Meal,
-    Configuration,
-    ExercicesInfo,
-    GlucoseInfo,
-    InsulinInfo
+export const User = {
+    name: "User",
+    properties: {
+        id: "int",
+        name: "string",
+        email: "string",
+        Age: "int",
+    },
+    primaryKey: "id",
 };

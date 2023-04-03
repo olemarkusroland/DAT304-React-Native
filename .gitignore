@@ -63,6 +63,8 @@ yarn-error.log
 .metro-health-check*
 
 # Other
+.vs/
+DAT304-React-Native/.vs
 script.bat
 my.realm.management/
 *.eslintrc.js

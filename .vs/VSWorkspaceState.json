@@ -1,8 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\backend"
+    "\\backend",
+    "\\backend\\realm"
   ],
-  "SelectedNode": "\\App.tsx",
   "PreviewInSolutionExplorer": false
 }

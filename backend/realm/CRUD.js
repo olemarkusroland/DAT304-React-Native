@@ -1,6 +1,34 @@
 import { useGlucoseData, useInsulinData } from '../nightscoutAPI';
 
 
+function autoIncrementId(realm, modelName) {
+    const lastObject = realm.objects(modelName).sorted('_id', true)[0];
+    const highestId = lastObject == null ? 0 : lastObject._id;
+    return highestId + 1;
+}
+
+
+function getLastMonthDate() {
+    const lastMonth = new Date();
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+    return lastMonth;
+}
+
+export async function readGlucoses(realm) {
+    const glucoses = await realm.objects("GlucoseInfo")
+
+    if (!glucoses) {
+        return null;
+    }
+
+    const glucosesArray = Array.from(glucoses).map(glucose => ({
+        glucose: glucose.glucose,
+        timestamp: glucose.timestamp,
+    }));
+
+    return glucosesArray;
+}
+
 export async function readLatestGlucose(realm) {
     let glucoseInfos = await realm.objects("GlucoseInfo");
 
@@ -14,25 +42,6 @@ export async function readLatestGlucose(realm) {
     const isoString = dateObj.toISOString();
     return isoString;
 };
-
-export async function readLatestInsulin(realm) {
-    let insulinInfos = await realm.objects("InsulinInfo");
-
-    if (insulinInfos.isEmpty())
-        return null;
-
-    insulinInfos = insulinInfos.sorted("timestamp", true);
-    const dateString = insulinInfos[0].timestamp;
-    const dateObj = new Date(dateString.getTime() + 1 * 60000);
-    const isoString = dateObj.toISOString();
-    return isoString;
-};
-
-function getLastMonthDate() {
-    const lastMonth = new Date();
-    lastMonth.setMonth(lastMonth.getMonth() - 1);
-    return lastMonth;
-}
 
 export async function updateGlucose(realm) {
     const latestGlucose = await readLatestGlucose(realm);
@@ -60,6 +69,33 @@ export async function updateGlucose(realm) {
 };
 
 
+export async function readInsulins(realm) {
+    const insulins = realm.objects("InsulinInfo")
+
+    if (!insulins) {
+        return null;
+    }
+
+    const insulinsArray = Array.from(insulins).map(insulin => ({
+        insulin: insulin.insulin,
+        timestamp: insulin.timestamp,
+    }));
+
+    return insulinsArray;
+};
+
+export async function readLatestInsulin(realm) {
+    let insulinInfos = await realm.objects("InsulinInfo");
+
+    if (insulinInfos.isEmpty())
+        return null;
+
+    insulinInfos = insulinInfos.sorted("timestamp", true);
+    const dateString = insulinInfos[0].timestamp;
+    const dateObj = new Date(dateString.getTime() + 1 * 60000);
+    const isoString = dateObj.toISOString();
+    return isoString;
+};
 
 export async function updateInsulin(realm) {
     const latestInsulin = await readLatestInsulin(realm);
@@ -136,14 +172,62 @@ export async function createOrUpdateFood(realm, name, calories, carbohydrates, p
     });
 }
 
-export async function readFoodEntries(realm) {
-    const allFoodEntry = await realm.objects('FoodEntry');
+export async function deleteFood(realm, foodName) {
+    try {
+        const foodToDelete = await realm.objectForPrimaryKey('Food', foodName);
 
-    if (!allFoodEntry) {
+        if (!foodToDelete) {
+            console.log(`Food with name ${foodName} not found`);
+            return false;
+        }
+
+        await realm.write(() => {
+            realm.delete(foodToDelete);
+        });
+
+        console.log(`Food with name ${foodName} deleted`);
+        return true;
+    } catch (error) {
+        console.log('Error deleting Food:', error);
+        return false;
+    }
+}
+
+
+export async function readFoodEntries(realm) {
+    const foodEntries = await realm.objects('FoodEntry');
+
+    if (!foodEntries) {
         return null;
     }
 
-    return allFoodEntry;
+    const foodEntriesArray = Array.from(foodEntries).map(entry => ({
+        _id: entry._id,
+        food: entry.food,
+        amount: entry.amount,
+    }));
+
+    return foodEntriesArray;
+}
+
+export async function readFoodEntry(realm, foodEntryId) {
+    try {
+        const foodEntry = await realm.objectForPrimaryKey('FoodEntry', foodEntryId);
+
+        if (!foodEntry) {
+            console.log(`FoodEntry with id ${foodEntryId} not found`);
+            return null;
+        }
+
+        return {
+            _id: foodEntry._id,
+            food: foodEntry.food,
+            amount: foodEntry.amount,
+        };
+    } catch (error) {
+        console.log('Error retrieving FoodEntry:', error);
+        return null;
+    }
 }
 
 export async function createFoodEntry(realm, foodName, amount) {
@@ -154,12 +238,34 @@ export async function createFoodEntry(realm, foodName, amount) {
 
     await realm.write(() => {
         realm.create('FoodEntry', {
+            _id: autoIncrementId(realm, 'FoodEntry'),
             food,
             amount,
-            inMeal: false,
         });
     });
 }
+
+export async function deleteFoodEntry(realm, foodEntryId) {
+    try {
+        const foodEntry = realm.objectForPrimaryKey('FoodEntry', foodEntryId);
+
+        if (!foodEntry) {
+            console.log(`FoodEntry with id ${foodEntryId} not found`);
+            return;
+        }
+
+        await realm.write(() => {
+            realm.delete(foodEntry);
+        });
+
+        console.log(`FoodEntry with id ${foodEntryId} has been deleted`);
+        return true
+    } catch (error) {
+        console.log('Error deleting FoodEntry:', error);
+        return false
+    }
+}
+
 
 export async function readMeals(realm) {
     const meals = await realm.objects('Meal');
@@ -169,83 +275,157 @@ export async function readMeals(realm) {
     }
 
     const mealsArray = Array.from(meals).map(meal => ({
+        _id: meal._id,
         timestamp: meal.timestamp,
-        entries: Array.from(meal.entries).map(entry => ({
-            food: {
-                name: entry.food.name,
-                calories: entry.food.calories,
-                carbohydrates: entry.food.carbohydrates,
-                protein: entry.food.protein,
-                fat: entry.food.fat,
-            },
-            amount: entry.amount,
-            inMeal: entry.inMeal
-        })),
+        entries: Array.from(meal.entries),
     }));
 
     return mealsArray;
 }
 
-export async function createMeal(realm) {
-    const allFoodEntries = await realm.objects('FoodEntry').filtered('inMeal == false');
+export async function readMeal(realm, mealId) {
+    try {
+        const meal = await realm.objectForPrimaryKey('Meal', mealId);
 
-    if (!allFoodEntries || allFoodEntries.length === 0) {
-        console.log('No food entries found in the database.');
-        return;
+        if (!meal) {
+            console.log(`Meal with _id ${mealId} not found`);
+            return null;
+        }
+
+        return {
+            _id: meal._id,
+            timestamp: meal.timestamp,
+            entries: Array.from(meal.entries),
+        };
+    } catch (error) {
+        console.log('Error reading Meal:', error);
+        return null;
     }
+}
 
-    const meal = {
-        timestamp: new Date().toISOString(),
-        entries: [],
-    };
+export async function createMeal(realm, foodEntryIds) {
+    try {
+        const foodEntries = [];
 
-    console.log('Meal object:', meal);
+        for (const id of foodEntryIds) {
+            const foodEntry = await realm.objectForPrimaryKey('FoodEntry', id);
+            if (foodEntry) {
+                foodEntries.push(foodEntry);
+            } else {
+                console.log(`FoodEntry with id ${id} not found`);
+            }
+        }
 
-    await realm.write(async () => {
-        console.log('Inside realm.write');
-        const newMeal = realm.create('Meal', meal);
-        console.log('New meal created:', newMeal);
+        await realm.write(() => {
+            const newMeal = realm.create('Meal', {
+                _id: autoIncrementId(realm, 'Meal'),
+                timestamp: new Date().toISOString(),
+                entries: foodEntries,
+            });
 
-        allFoodEntries.forEach(entry => {
-            console.log('Processing entry:', entry);
-            // Modify the relationship
-            const { food, amount, inMeal } = entry;
-            console.log('Creating FoodEntry with meal:', newMeal);
-            const newEntry = realm.create('FoodEntry', { food, amount, inMeal: true, meal: newMeal });
-            console.log('Entry processed:', newEntry);
+            console.log('New meal created:', newMeal);
         });
-    });
 
-    console.log('Meal created with the available food entries and their "inMeal" attribute set to true.');
+        console.log('Meal created with the specified food entries.');
+    } catch (error) {
+        console.log('Error creating meal:', error);
+    }
+}
+
+export async function deleteMeal(realm, mealId) {
+    try {
+        const mealToDelete = await realm.objectForPrimaryKey('Meal', mealId);
+
+        if (!mealToDelete) {
+            console.log(`Meal with _id ${mealId} not found`);
+            return false;
+        }
+
+        await realm.write(() => {
+            realm.delete(mealToDelete);
+        });
+
+        console.log(`Meal with _id ${mealId} deleted`);
+        return true;
+    } catch (error) {
+        console.log('Error deleting Meal:', error);
+        return false;
+    }
 }
 
 
-export async function readGlucoses(realm) {
-    const glucoses = await realm.objects("GlucoseInfo")
+export async function readUser(realm, userId) {
+    try {
+        const user = await realm.objectForPrimaryKey('User', userId);
 
-    if (!glucoses) {
+        if (!user) {
+            console.log(`User with id ${userId} not found`);
+            return null;
+        }
+
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            age: user.Age,
+        };
+    } catch (error) {
+        console.log('Error reading User:', error);
         return null;
     }
-
-    const glucosesArray = Array.from(glucoses).map(glucose => ({
-        glucose: glucose.glucose,
-        timestamp: glucose.timestamp,
-    }));
-
-    return glucosesArray;
 }
 
-export async function readInsulins(realm) {
-    const insulins = realm.objects("InsulinInfo")
+export async function readUsers(realm) {
+    const users = await realm.objects('User');
 
-    if (!insulins) {
+    if (!users) {
         return null;
     }
 
-    const insulinsArray = Array.from(insulins).map(insulin => ({
-        insulin: insulin.insulin,
-        timestamp: insulin.timestamp,
+    const usersArray = Array.from(users).map(user => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        age: user.Age,
     }));
 
-    return insulinsArray;
-};
+    return usersArray;
+}
+
+export async function createUser(realm, id, name, email, age) {
+    try {
+        await realm.write(() => {
+            const newUser = realm.create('User', {
+                id,
+                name,
+                email,
+                age,
+            });
+        });
+
+        console.log('New user created:', { id, name, email, age });
+    } catch (error) {
+        console.log('Error creating User:', error);
+    }
+}
+
+export async function deleteUser(realm, userId) {
+    try {
+        const userToDelete = await realm.objectForPrimaryKey('User', userId);
+
+        if (!userToDelete) {
+            console.log(`User with id ${userId} not found`);
+            return false;
+        }
+
+        await realm.write(() => {
+            realm.delete(userToDelete);
+        });
+
+        console.log(`User with id ${userId} deleted`);
+        return true;
+    } catch (error) {
+        console.log('Error deleting User:', error);
+        return false;
+    }
+}

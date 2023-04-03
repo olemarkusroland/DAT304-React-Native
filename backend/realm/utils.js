@@ -56,32 +56,3 @@ export async function deleteRealmFile() {
         throw error;
     }
 }
-
-export async function isRealmEmpty(realm) {
-    const a = realm.objects("User").isEmpty();
-    const s = realm.objects("Food").isEmpty();
-    const d = realm.objects("FoodEntry").isEmpty();
-    const f = realm.objects("Meal").isEmpty();
-    const g = realm.objects("Configuration").isEmpty();
-    const h = realm.objects("ExercicesInfo").isEmpty();
-    const j = realm.objects("GlucoseInfo").isEmpty();
-    const k = realm.objects("InsulinInfo").isEmpty();
-    console.log(a)
-    console.log(s)
-    console.log(d)
-    console.log(f)
-    console.log(g)
-    console.log(h)
-    console.log(j)
-    console.log(k)
-    return (
-        userEmpty &&
-        foodEmpty &&
-        foodEntryEmpty &&
-        foodEntriesEmpty &&
-        configurationEmpty &&
-        exercicesInfoEmpty &&
-        glucoseInfoEmpty &&
-        insulinInfoEmpty
-    );
-}
