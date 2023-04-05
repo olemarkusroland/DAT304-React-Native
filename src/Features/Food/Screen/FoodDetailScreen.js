@@ -12,7 +12,6 @@ import {Divider, List} from 'react-native-paper';
 import {Chart} from '../Component/Chart';
 import {FoodContext} from '../../../services/Foods/Food-Context';
 import {styles} from '../../../Styles';
-import {FoodInfo} from '../Component/FoodInfo';
 
 export const FoodDetailScreen = ({route, navigation}) => {
   const {food} = route.params;
@@ -30,8 +29,8 @@ export const FoodDetailScreen = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
-      <FoodInfo food={food} />
-
+      <Text style={styles.name}>{food.name}</Text>
+      <Text style={styles.description}>{food.carbs}</Text>
       {/* Add more fields from the mock data if needed */}
 
       <Text style={styles.label}>Grams:</Text>
