@@ -5,35 +5,16 @@ import {AccountScreen} from '../../Features/Account/Screen/AccountScreen';
 import {RegisterScreen} from '../../Features/Account/Screen/RegisterScreen';
 
 const Stack = createStackNavigator();
-
 export const AccountNavigator = () => (
   <Stack.Navigator>
     <Stack.Screen
       options={{
         headerStyle: {
-          backgroundColor: 'white',
+          backgroundColor: 'black',
         },
       }}
-      name="Covid Rooms"
+      name="DMS"
       component={AccountScreen}
-    />
-    <Stack.Screen
-      options={{
-        headerStyle: {
-          backgroundColor: 'white',
-        },
-      }}
-      name="Login"
-      component={LoginScreen}
-    />
-    <Stack.Screen
-      options={{
-        headerStyle: {
-          backgroundColor: 'white',
-        },
-      }}
-      name="Register"
-      component={RegisterScreen}
     />
   </Stack.Navigator>
 );

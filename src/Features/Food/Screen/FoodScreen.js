@@ -24,10 +24,9 @@ export const FoodScreen = ({navigation}) => {
   const SearchHeaderComponent = <Search />;
   const renderFood = useCallback(
     ({item}) => {
-      if (!item || !item.name || !item.carbs) {
+      if (!item || !item.name || !item.carbohydrates) {
         return null;
       }
-
       const onPress = () => {
         navigation.navigate('FoodDetail', {food: item});
       };
