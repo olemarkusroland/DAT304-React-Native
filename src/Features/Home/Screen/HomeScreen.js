@@ -6,9 +6,7 @@ export const HomeScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text>Home Screen</Text>
-      <TouchableOpacity onPress={() => navigation.navigate('Info')}>
-        <InformationChart />
-      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Info')} />
     </View>
   );
 };

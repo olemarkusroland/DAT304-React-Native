@@ -1,39 +1,39 @@
 import {Dimensions, View} from 'react-native';
 import {LineChart} from 'react-native-chart-kit';
+import moment from 'moment';
+import React from 'react';
 
-// Using DB Reference
+export const Chart = ({glucoseData, insulinData}) => {
+  const labels = glucoseData.map(data => data.timestamp);
 
-export const Chart = ({data}) => {
+  const glucoseDataset = {
+    data: glucoseData.map(data => data.glucose),
+    color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`,
+    strokeWidth: 2,
+  };
+
+  const insulinDataset = {
+    data: insulinData.map(data => data.insulin),
+    color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
+    strokeWidth: 2,
+  };
+
+  const formatXLabel = value => {
+    return moment.utc(value).local().format('LT');
+  };
+
   return (
-    <View>
+    <View style={{}}>
       <LineChart
         data={{
-          labels: [
-            '15',
-            '14',
-            '13',
-            '12',
-            '10',
-            '9',
-            '8',
-            '7',
-            '6',
-            '5',
-            '4',
-            '3',
-            '2',
-            '1',
-            'Now',
-          ],
-          datasets: [
-            {
-              data: data,
-            },
-          ],
+          labels: labels,
+          datasets: [glucoseDataset, insulinDataset],
         }}
         width={Dimensions.get('window').width} // from react-native
         height={220}
+        yAxisSuffix="g"
         yAxisInterval={1} // optional, defaults to 1
+        formatXLabel={formatXLabel}
         chartConfig={{
           backgroundColor: '#e26a00',
           backgroundGradientFrom: '#fb8c00',
@@ -52,7 +52,9 @@ export const Chart = ({data}) => {
         }}
         bezier
         style={{
-          marginVertical: 8,
+          marginVertical: 15,
+          marginLeft: 15,
+          marginRight: 15,
           borderRadius: 16,
         }}
       />

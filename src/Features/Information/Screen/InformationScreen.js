@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Dimensions,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {
   foodlist,
@@ -14,6 +15,9 @@ import {
   food_styles,
 } from '../../Home/Component/foodlist';
 import InformationChart from '../Component/infograph';
+import {HealthContext} from '../../../services/Health/Health-Context';
+import {Chart} from '../../Food/Component/Chart';
+import moment from 'moment';
 
 const placebodata = {
   labels: [
@@ -35,9 +39,19 @@ const placebodata = {
 };
 
 const InformationScreen = ({navigation}) => {
+  const {glucose, insulin, isLoading} = useContext(HealthContext);
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+  console.log(glucose, insulin);
   return (
     <View style={styles.container}>
-      <InformationChart />
+      <InformationChart glucoseData={glucose} insulinData={insulin} />
       <View style={food_styles.container}>
         <TouchableOpacity
           style={{
@@ -65,5 +79,4 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
   },
 });
-
 export default InformationScreen;

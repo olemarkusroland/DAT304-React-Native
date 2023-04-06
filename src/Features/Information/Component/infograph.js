@@ -21,42 +21,66 @@ const placebodata = {
   ],
   legend: ['Whole hour'], // optional
 };
-const InformationChart = () => {
-  const [data, setData] = useState(placebodata);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newData = require('../../Home/Component/data.json');
-      // Update the labels with the current time in 5-minute intervals
-      const newLabels = Array.from({length: 6}, (_, i) => {
-        const time = moment()
-          .add(5 * i, 'minutes')
-          .format();
-        return time;
-      });
-      setData({
-        labels: newLabels,
-        datasets: [
-          {
-            data: newData,
-            color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`,
-            strokeWidth: 2,
-          },
-        ],
-        legend: ['Whole hour'],
-      });
-    }, 10000); // 10s in milliseconds, change to 5 min in production
-    return () => clearInterval(interval);
-  }, []);
-
+const InformationChart = ({glucoseData, insulinData}) => {
+  if (!glucoseData || !insulinData) {
+    return <Text>No health data available</Text>;
+  }
+  console.log('glucoseData:', glucoseData);
+  console.log('glucoseData type:', typeof glucoseData);
+  console.log('insulinData:', insulinData);
+  console.log('glucoseData type:', typeof insulinData);
   const formatXLabel = value => {
-    return moment.utc(value).local().format('LT');
+    if (!value) {
+      return '';
+    }
+
+    try {
+      const momentObj = moment.utc(value, 'YYYY-MM-DDTHH:mm:ss.sssZ');
+      return momentObj.local().format('LT');
+    } catch (error) {
+      console.error(error);
+      return '';
+    }
   };
+
+  insulinData.map(data => {
+    const glucoseValue = data.insulin;
+    const timestamp = data.timestamp;
+    console.log(`Glucose value: ${glucoseValue}, Timestamp: ${timestamp}`);
+  });
+  glucoseData.map(data => {
+    const glucoseValue = data.glucose;
+    const timestamp = data.timestamp;
+    console.log(`Glucose value: ${glucoseValue}, Timestamp: ${timestamp}`);
+  });
+
+  const glucoseMappedData = glucoseData.map(data => ({
+    glucoseValue: data.glucose,
+    timestamp: data.timestamp,
+  }));
+
+  const insulinMappedData = insulinData.map(data => ({
+    insulinValue: data.insulin,
+    timestamp: data.timestamp,
+  }));
 
   return (
     <View style={{}}>
       <LineChart
-        data={data}
+        data={{
+          datasets: [
+            {
+              data: glucoseMappedData.map(data => data.glucoseValue),
+              color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`,
+              strokeWidth: 2,
+            },
+            {
+              data: insulinMappedData.map(data => data.insulinValue),
+              color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
+              strokeWidth: 2,
+            },
+          ],
+        }}
         width={Dimensions.get('window').width} // from react-native
         height={220}
         yAxisSuffix="g"
@@ -89,5 +113,4 @@ const InformationChart = () => {
     </View>
   );
 };
-
 export default InformationChart;
