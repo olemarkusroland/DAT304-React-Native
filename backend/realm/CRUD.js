@@ -30,9 +30,8 @@ export async function readGlucoses(realm) {
     return glucosesArray;
 }
 
-export async function readLatestGlucose() {
+export async function readLatestGlucose(realm) {
     try {
-        const realm = await realmOpen();
         if (realm) {
             let glucoseInfos = await realm.objects("GlucoseInfo");
 
@@ -54,9 +53,7 @@ export async function readLatestGlucose() {
 }
 
 
-export async function updateGlucose() {
-    const realm = await realmOpen();
-
+export async function updateGlucose(realm) {
     if (!realm) {
         console.error('updateGlucose: Realm instance is null');
         return;
@@ -84,8 +81,6 @@ export async function updateGlucose() {
     } else {
         console.log("No glucose entries to add to database.");
     }
-
-    realm.close();
 }
 
 
@@ -104,9 +99,8 @@ export async function readInsulins(realm) {
     return insulinsArray;
 };
 
-export async function readLatestInsulin() {
+export async function readLatestInsulin(realm) {
     try {
-        const realm = await realmOpen();
         if (realm) {
             let insulinInfos = await realm.objects("InsulinInfo");
 
@@ -127,9 +121,7 @@ export async function readLatestInsulin() {
     }
 }
 
-export async function updateInsulin() {
-    const realm = await realmOpen();
-
+export async function updateInsulin(realm) {
     if (!realm) {
         console.error('updateInsulin: Realm instance is null');
         return;
@@ -157,8 +149,6 @@ export async function updateInsulin() {
     } else {
         console.log("No insulin entries to add to database.");
     }
-
-    realm.close();
 }
 
 

@@ -25,8 +25,8 @@ const App = () => {
     useEffect(() => {
         const fetchLatestData = async () => {
             if (realm) {
-                const glucose = await readLatestGlucose();
-                const insulin = await readLatestInsulin();
+                const glucose = await readLatestGlucose(realm);
+                const insulin = await readLatestInsulin(realm);
 
                 setLatestGlucose(glucose);
                 setLatestInsulin(insulin);
@@ -48,7 +48,7 @@ const App = () => {
     }, [realm]);
 
 
-    useBackgroundFetch();
+    useBackgroundFetch(realm);
 
     return (
         <SafeAreaView style={styles.container}>
