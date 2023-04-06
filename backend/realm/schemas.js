@@ -91,3 +91,16 @@ export const User = {
     },
     primaryKey: "id",
 };
+
+const schemas = [
+    GlucoseInfo,
+    InsulinInfo,
+    Food,
+    FoodEntry,
+    Meal,
+    Configuration,
+    ExercicesInfo,
+    User,
+];
+
+export default schemas;

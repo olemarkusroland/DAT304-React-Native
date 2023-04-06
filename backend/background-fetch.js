@@ -1,28 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, View, LogBox } from 'react-native';
+import { useEffect } from 'react';
 import BackgroundFetch from 'react-native-background-fetch';
+import { updateGlucose, updateInsulin } from './realm/CRUD.js'
 
-LogBox.ignoreLogs(['Remote debugger']);
-
-export const BackgroundTest = () => {
-    const [events, setEvents] = useState([]);
-
-    const addEvent = (event) => {
-        setEvents((prevEvents) => [...prevEvents, event]);
-    };
-
-    const onFetchEvent = async (taskId) => {
-        console.log('[BackgroundFetch] taskId:', taskId);
-        const timestamp = new Date().toLocaleTimeString();
-        addEvent({ taskId, timestamp });
-        BackgroundFetch.finish(taskId);
-    };
-
+export const useBackgroundFetch = () => {
     useEffect(() => {
         const initBackgroundFetch = async () => {
             await BackgroundFetch.configure(
-                { minimumFetchInterval: 15 }, // Set the minimum fetch interval
-                onFetchEvent,
+                { minimumFetchInterval: 15 },
+                async (taskId) => {
+                    console.log('[BackgroundFetch] taskId:', taskId);
+
+                    await updateGlucose();
+                    await updateInsulin();
+
+                    BackgroundFetch.finish(taskId);
+                },
                 (taskId) => {
                     console.warn('[BackgroundFetch] taskId TIMEOUT:', taskId);
                     BackgroundFetch.finish(taskId);
@@ -36,32 +28,14 @@ export const BackgroundTest = () => {
         initBackgroundFetch();
     }, []);
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Background Fetch Events</Text>
-            <View style={styles.eventList}>
-                {events.map((event, index) => (
-                    <Text key={index}>
-                        [Event {index + 1}] {event.taskId}: {event.timestamp}
-                    </Text>
-                ))}
-            </View>
-        </SafeAreaView>
-    );
-};
+    const scheduleTestTask = async () => {
+        await BackgroundFetch.scheduleTask({
+            taskId: 'test-background-fetch',
+            forceAlarmManager: true,
+            delay: 20000, // Run the task 10 seconds after scheduling
+        });
+    };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    eventList: {
-        paddingHorizontal: 20,
-    },
-});
+    scheduleTestTask();
+
+};

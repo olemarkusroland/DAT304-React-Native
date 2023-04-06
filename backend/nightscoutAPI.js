@@ -5,7 +5,6 @@ export const useGlucoseData = async (from, to) => {
             method: 'GET',
         });
         const responseJson = await response.json();
-        console.log(responseJson);
         return responseJson;
     } catch (error) {
         console.error(error);
@@ -20,7 +19,6 @@ export const useInsulinData = async (from, to ) => {
             method: 'GET',
         });
         const responseJson = await response.json();
-        console.log(responseJson);
         return responseJson;
     } catch (error) {
         console.error(error);

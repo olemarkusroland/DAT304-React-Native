@@ -1,6 +1,6 @@
 import Realm from 'realm';
 import RNFS from 'react-native-fs';
-import { User, Food, FoodEntry, Meal, Configuration, ExercicesInfo, GlucoseInfo, InsulinInfo } from './schemas';
+import schemas from './schemas';
 
 async function getRealmPath() {
     const appDir = await RNFS.DocumentDirectoryPath;
@@ -24,7 +24,7 @@ export async function realmOpen() {
         console.log("Opening Realm...");
         const realm = await Realm.open({
             path: realmPath,
-            schema: [User, Food, FoodEntry, Meal, Configuration, ExercicesInfo, GlucoseInfo, InsulinInfo],
+            schema: schemas,
         });
         return realm;
     } catch (error) {

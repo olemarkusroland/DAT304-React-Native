@@ -1,40 +1,60 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, ScrollView } from 'react-native';
+import { View, SafeAreaView, StyleSheet, Text } from 'react-native';
+import Realm from 'realm';
 
-import { readFoods } from './backend/realm/CRUD';
-
-import { realmOpen } from './backend/realm/utils';
-
-//import './backend/realm/testCRUD.js';
-
-interface FoodType {
-    name: string;
-    calories: number;
-    carbohydrates: number;
-    protein: number;
-    fat: number;
-}
+import { realmOpen, deleteRealmFile } from './backend/realm/utils';
+import { useBackgroundFetch } from "./backend/background-fetch";
+import { readLatestGlucose, readLatestInsulin } from './backend/realm/CRUD';
 
 const App = () => {
-    const [foods, setFoods] = useState<FoodType[]>([]);
+    const [realm, setRealm] = useState<Realm | null>(null);
+    const [latestGlucose, setLatestGlucose] = useState<string | null>('No data');
+    const [latestInsulin, setLatestInsulin] = useState<string | null>('No data');
+
 
     useEffect(() => {
-        (async () => {
-            const realm = await realmOpen();
-            const allFoods = await readFoods(realm);
-            setFoods(allFoods || []);
-        })();
+        const initializeRealm = async () => {
+            await deleteRealmFile();
+            const r = await realmOpen();
+
+            setRealm(r);
+        };
+        initializeRealm();
     }, []);
+
+    useEffect(() => {
+        const fetchLatestData = async () => {
+            if (realm) {
+                const glucose = await readLatestGlucose();
+                const insulin = await readLatestInsulin();
+
+                setLatestGlucose(glucose);
+                setLatestInsulin(insulin);
+            }
+            else {
+                console.log("fetchLatestData: No realm")
+            }
+        };
+
+        // Set an interval to fetch data every 15 seconds
+        const intervalId = setInterval(() => {
+            fetchLatestData();
+        }, 15 * 1000);
+
+        // Clean up the interval when the component is unmounted
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [realm]);
+
+
+    useBackgroundFetch();
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView>
-                {foods.map((food, index) => (
-                    <Text key={index} style={styles.text}>
-                        {food.name}: {food.calories} cals, {food.carbohydrates}g carbs, {food.protein}g prot, {food.fat}g fat
-                    </Text>
-                ))}
-            </ScrollView>
+            <Text style={styles.title}>Background Fetch Example</Text>
+            <Text>Latest Glucose: {latestGlucose ? latestGlucose : 'No data available'}</Text>
+            <Text>Latest Insulin: {latestInsulin ? latestInsulin : 'No data available'}</Text>
         </SafeAreaView>
     );
 };
@@ -42,13 +62,13 @@ const App = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
         justifyContent: 'center',
+        alignItems: 'center',
     },
-    text: {
-        fontSize: 20,
+    title: {
+        fontSize: 24,
         fontWeight: 'bold',
+        marginBottom: 20,
     },
 });
 

@@ -1,4 +1,5 @@
 import { useGlucoseData, useInsulinData } from '../nightscoutAPI';
+import { realmOpen } from './utils';
 
 
 function autoIncrementId(realm, modelName) {
@@ -29,21 +30,38 @@ export async function readGlucoses(realm) {
     return glucosesArray;
 }
 
-export async function readLatestGlucose(realm) {
-    let glucoseInfos = await realm.objects("GlucoseInfo");
+export async function readLatestGlucose() {
+    try {
+        const realm = await realmOpen();
+        if (realm) {
+            let glucoseInfos = await realm.objects("GlucoseInfo");
 
-    if (glucoseInfos.isEmpty())
+            if (glucoseInfos.isEmpty())
+                return null;
+
+            glucoseInfos = glucoseInfos.sorted("timestamp", true);
+            const dateString = glucoseInfos[0].timestamp;
+            const dateObj = new Date(dateString.getTime() + 1 * 60000);
+            const isoString = dateObj.toISOString();
+            return isoString;
+        } else {
+            throw new Error('Realm instance is null');
+        }
+    } catch (error) {
+        console.error('Error fetching latest glucose:', error);
         return null;
+    }
+}
 
 
-    glucoseInfos = glucoseInfos.sorted("timestamp", true);
-    const dateString = glucoseInfos[0].timestamp;
-    const dateObj = new Date(dateString.getTime() + 1 * 60000);
-    const isoString = dateObj.toISOString();
-    return isoString;
-};
+export async function updateGlucose() {
+    const realm = await realmOpen();
 
-export async function updateGlucose(realm) {
+    if (!realm) {
+        console.error('updateGlucose: Realm instance is null');
+        return;
+    }
+
     const latestGlucose = await readLatestGlucose(realm);
 
     const currentDate = new Date();
@@ -52,7 +70,7 @@ export async function updateGlucose(realm) {
     const result = await useGlucoseData(fromDate.toISOString(), currentDate.toISOString());
 
     if (result.length !== 0) {
-        console.log("Adding " + result.length + " to entry...");
+        console.log("Adding " + result.length + " glucose entries.");
 
         await realm.write(() => {
             for (const glucoseInfo of result) {
@@ -64,9 +82,11 @@ export async function updateGlucose(realm) {
 
         console.log("Database: Glucose updated");
     } else {
-        console.log("No entries to add to database.");
+        console.log("No glucose entries to add to database.");
     }
-};
+
+    realm.close();
+}
 
 
 export async function readInsulins(realm) {
@@ -84,29 +104,46 @@ export async function readInsulins(realm) {
     return insulinsArray;
 };
 
-export async function readLatestInsulin(realm) {
-    let insulinInfos = await realm.objects("InsulinInfo");
+export async function readLatestInsulin() {
+    try {
+        const realm = await realmOpen();
+        if (realm) {
+            let insulinInfos = await realm.objects("InsulinInfo");
 
-    if (insulinInfos.isEmpty())
+            if (insulinInfos.isEmpty())
+                return null;
+
+            insulinInfos = insulinInfos.sorted("timestamp", true);
+            const dateString = insulinInfos[0].timestamp;
+            const dateObj = new Date(dateString.getTime() + 1 * 60000);
+            const isoString = dateObj.toISOString();
+            return isoString;
+        } else {
+            throw new Error('readLatestInsulin: Realm instance is null');
+        }
+    } catch (error) {
+        console.error('Error fetching latest insulin:', error);
         return null;
+    }
+}
 
-    insulinInfos = insulinInfos.sorted("timestamp", true);
-    const dateString = insulinInfos[0].timestamp;
-    const dateObj = new Date(dateString.getTime() + 1 * 60000);
-    const isoString = dateObj.toISOString();
-    return isoString;
-};
+export async function updateInsulin() {
+    const realm = await realmOpen();
 
-export async function updateInsulin(realm) {
+    if (!realm) {
+        console.error('updateInsulin: Realm instance is null');
+        return;
+    }
+
     const latestInsulin = await readLatestInsulin(realm);
 
     const currentDate = new Date();
     const fromDate = latestInsulin === null ? getLastMonthDate() : new Date(latestInsulin);
 
-    const result = await useInsulinData(fromDate, currentDate);
+    const result = await useInsulinData(fromDate.toISOString(), currentDate.toISOString());
 
     if (result.length !== 0) {
-        console.log("Adding " + result.length + " to entry...");
+        console.log("Adding " + result.length + " insulin entries.");
 
         await realm.write(() => {
             for (const insulinInfo of result) {
@@ -118,9 +155,11 @@ export async function updateInsulin(realm) {
 
         console.log("Database: Insulin updated");
     } else {
-        console.log("No entries to add to database.");
+        console.log("No insulin entries to add to database.");
     }
-};
+
+    realm.close();
+}
 
 
 export async function readFoods(realm) {
