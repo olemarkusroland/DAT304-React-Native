@@ -1,10 +1,5 @@
-import React, {createContext, useEffect, useRef, useState} from 'react';
-import {
-  fetchJsonData,
-  GetFoodAsync,
-  GetFoodAsyncMock,
-  updateRealmWithJsonData,
-} from './Food-Service';
+import React, {createContext, useEffect, useState} from 'react';
+import {GetFoodAsync} from './Food-Service';
 import debounce from 'lodash.debounce';
 
 export const FoodContext = createContext();
@@ -16,7 +11,6 @@ export const FoodContextProvider = ({children}) => {
   const [searchKeyword, setSearchKeyword] = useState('');
   // Add a new state for the selected foods
   const [selectedFoods, setSelectedFoods] = useState([]);
-
   const addDistinctFood = food => {
     setSelectedFoods(prevSelectedFoods => {
       const foodIndex = prevSelectedFoods.findIndex(f => f.name === food.name);

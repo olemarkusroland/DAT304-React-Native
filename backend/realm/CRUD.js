@@ -1,4 +1,4 @@
-import {useGlucoseData, useInsulinData} from '../nightscoutAPI';
+import {UseGlucoseData, UseInsulinData} from '../nightscoutAPI';
 
 function autoIncrementId(realm, modelName) {
   const lastObject = realm.objects(modelName).sorted('_id', true)[0];
@@ -48,7 +48,7 @@ export async function updateGlucose(realm) {
   const fromDate =
     latestGlucose === null ? getLastMonthDate() : new Date(latestGlucose);
 
-  const result = await useGlucoseData(
+  const result = await UseGlucoseData(
     fromDate.toISOString(),
     currentDate.toISOString(),
   );
@@ -109,7 +109,7 @@ export async function updateInsulin(realm) {
   const fromDate =
     latestInsulin === null ? getLastMonthDate() : new Date(latestInsulin);
 
-  const result = await useInsulinData(fromDate, currentDate);
+  const result = await UseInsulinData(fromDate, currentDate);
 
   if (result.length !== 0) {
     console.log('Adding ' + result.length + ' to entry...');
