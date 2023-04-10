@@ -1,6 +1,8 @@
 import React, {useState, createContext, useEffect} from 'react';
 import {GoogleAuthService} from './Auth-service';
 import {HealthService} from './Health-Service';
+import Realm from 'realm';
+import {deleteRealmFile, realmOpen} from '../../../backend/realm/utils';
 
 export const HealthContext = createContext();
 
@@ -11,10 +13,13 @@ export const HealthContextProvider = ({children}) => {
 
   useEffect(() => {
     const fetchHealthData = async () => {
+      const r = await realmOpen();
+
       setIsLoading(true);
+
       try {
-        const glucoseData = await HealthService.getGlucoseData2();
-        const insulinData = await HealthService.getInsulindata2();
+        const glucoseData = await HealthService.getGlucoseData2(r);
+        const insulinData = await HealthService.getInsulindata2(r);
         setGlucose(glucoseData);
         setInsulin(insulinData);
       } catch (error) {

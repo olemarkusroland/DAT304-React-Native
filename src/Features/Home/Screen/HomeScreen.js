@@ -20,11 +20,19 @@ export const HomeScreen = ({navigation}) => {
       </View>
     );
   }
+  const lastGlucoseValue =
+    glucose.length > 0 ? glucose[glucose.length - 1].glucose : null;
+  const lastTimeValue =
+    glucose.length > 0
+      ? glucose[glucose.length - 1].timestamp.toLocaleString()
+      : null;
+
   return (
     <View style={styles.container}>
-      <Text>Home Screen</Text>
+      <Text style={styles.GlucoseValue}>{lastGlucoseValue}mg/dl</Text>
+      <Text style={styles.TimeValue}>{lastTimeValue}</Text>
       <TouchableOpacity onPress={() => navigation.navigate('Info')}>
-        <InformationChart glucoseData={glucose} insulinData={insulin} />
+        <InformationChart glucoseData={glucose} insulinData={insulin || []} />
       </TouchableOpacity>
     </View>
   );
@@ -35,5 +43,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  GlucoseValue: {
+    fontSize: 52,
+  },
+  TimeValue: {
+    fontSize: 24,
+    color: 'grey',
   },
 });

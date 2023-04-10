@@ -12,10 +12,9 @@ const App = () => {
   const [realm, setRealm] = useState<Realm | null>(null);
   const [latestGlucose, setLatestGlucose] = useState<string | null>('No data');
   const [latestInsulin, setLatestInsulin] = useState<string | null>('No data');
-
   useEffect(() => {
     const initializeRealm = async () => {
-      await deleteRealmFile();
+      //await deleteRealmFile();
       const r = await realmOpen();
 
       setRealm(r);
@@ -59,16 +58,16 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
 });
 
 export default App;

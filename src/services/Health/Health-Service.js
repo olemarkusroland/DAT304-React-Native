@@ -26,13 +26,19 @@ export const HealthService = {
       console.error('Error updating insulin data:', e);
     }
   },
-  getInsulindata2: async () => {
+  getInsulindata2: async realm => {
     try {
-      const realm = await realmOpen();
-      let insulinData = await readInsulins(realm);
-      if (insulinData !== null) {
+      const fromDate = new Date();
+      fromDate.setDate(fromDate.getDate() - 1); // 1 days ago
+      const toDate = new Date(); // today
+      let insulinData = await readInsulins(realm, fromDate, toDate);
+
+      if (insulinData === null) {
         await updateInsulin(realm);
         insulinData = await readInsulins(realm);
+        if (insulinData === null) {
+          return [];
+        }
       }
       console.log(insulinData);
       return insulinData;
@@ -42,15 +48,21 @@ export const HealthService = {
     }
   },
 
-  getGlucoseData2: async () => {
+  getGlucoseData2: async realm => {
     try {
-      const realm = await realmOpen();
-      let glucoseData = await readGlucoses(realm);
-      if (glucoseData !== null) {
+      const fromDate = new Date();
+      fromDate.setDate(fromDate.getDate() - 1); // 7 days ago
+      const toDate = new Date(); // today
+
+      console.log(realm, fromDate, toDate);
+      let glucoseData = await readGlucoses(realm, fromDate, toDate);
+      console.log(glucoseData);
+
+      if (glucoseData === null) {
+        console.log(glucoseData, 'glucoseData in service is null');
         await updateGlucose(realm);
         glucoseData = await readGlucoses(realm);
       }
-      console.log(glucoseData);
 
       return glucoseData;
     } catch (error) {
@@ -59,9 +71,8 @@ export const HealthService = {
     }
   },
 
-  getGlucoseData: async () => {
+  getGlucoseData: async ({realm}) => {
     try {
-      const realm = await realmOpen();
       const glucoseData = await readGlucoses(realm);
       let sortedGlucoseData = glucoseData.sort(
         (a, b) => new Date(b.timestamp) - new Date(a.timestamp),

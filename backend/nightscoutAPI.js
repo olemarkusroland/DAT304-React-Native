@@ -1,30 +1,35 @@
-export const useGlucoseData = async (from, to) => {
-    try {
-        //console.log(from + " ___ " + to + "---->" + `https://oskarnightscoutweb1.azurewebsites.net/api/v1/entries/sgv.json?find[dateString][$gte]=${from}&find[dateString][$lte]=${to}&count=all`);
-        const response = await fetch(`https://oskarnightscoutweb1.azurewebsites.net/api/v1/entries/sgv.json?find[dateString][$gte]=${from}&find[dateString][$lte]=${to}&count=all`, {
-            method: 'GET',
-        });
-        const responseJson = await response.json();
-        return responseJson;
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
+export const UseGlucoseData = async (from, to) => {
+  try {
+    //console.log(from + " ___ " + to + "---->" + `https://oskarnightscoutweb1.azurewebsites.net/api/v1/entries/sgv.json?find[dateString][$gte]=${from}&find[dateString][$lte]=${to}&count=all`);
+    const response = await fetch(
+      `https://oskarnightscoutweb1.azurewebsites.net/api/v1/entries/sgv.json?find[dateString][$gte]=${from}&find[dateString][$lte]=${to}&count=all`,
+      {
+        method: 'GET',
+      },
+    );
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
-export const useInsulinData = async (from, to ) => {
-    try {
-        //console.log(from + " ___ " + to + "---->" + `https://oskarnightscoutweb1.azurewebsites.net/api/v1/treatments.json?find[created_at][$gte]=${from}&find[created_at][$lte]=${to}&count=all`);
-        const response = await fetch(`https://oskarnightscoutweb1.azurewebsites.net/api/v1/treatments.json?find[created_at][$gte]=${from}&find[created_at][$lte]=${to}&count=all`, {
-            method: 'GET',
-        });
-        const responseJson = await response.json();
-        return responseJson;
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
-    
+export const UseInsulinData = async (from, to) => {
+  try {
+    //console.log(from + " ___ " + to + "---->" + `https://oskarnightscoutweb1.azurewebsites.net/api/v1/treatments.json?find[created_at][$gte]=${from}&find[created_at][$lte]=${to}&count=all`);
+    const response = await fetch(
+      `https://oskarnightscoutweb1.azurewebsites.net/api/v1/treatments.json?find[created_at][$gte]=${from}&find[created_at][$lte]=${to}&count=all`,
+      {
+        method: 'GET',
+      },
+    );
+    const responseJson = await response.json();
+    return responseJson;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 export function CurrentTime() {
