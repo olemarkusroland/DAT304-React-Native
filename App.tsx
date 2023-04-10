@@ -4,13 +4,14 @@ import Realm from 'realm';
 
 import { realmOpen, deleteRealmFile } from './backend/realm/utils';
 import { useBackgroundFetch } from "./backend/background-fetch";
-import { readLatestGlucose, readLatestInsulin } from './backend/realm/CRUD';
+import { readLatestGlucose, readLatestInsulin, readGlucoses, readInsulins } from './backend/realm/CRUD';
+
+//import './backend/realm/testCRUD'
 
 const App = () => {
     const [realm, setRealm] = useState<Realm | null>(null);
     const [latestGlucose, setLatestGlucose] = useState<string | null>('No data');
     const [latestInsulin, setLatestInsulin] = useState<string | null>('No data');
-
 
     useEffect(() => {
         const initializeRealm = async () => {
@@ -46,7 +47,6 @@ const App = () => {
             clearInterval(intervalId);
         };
     }, [realm]);
-
 
     useBackgroundFetch(realm);
 

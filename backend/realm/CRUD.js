@@ -15,19 +15,26 @@ function getLastMonthDate() {
     return lastMonth;
 }
 
-export async function readGlucoses(realm) {
-    const glucoses = await realm.objects("GlucoseInfo")
+export async function readGlucoses(realm, fromDate, toDate) {
+    try {
+        const glucoses = realm
+            .objects("GlucoseInfo")
+            .filtered('timestamp >= $0 AND timestamp <= $1', fromDate, toDate);
 
-    if (!glucoses) {
+        if (!glucoses) {
+            return null;
+        }
+
+        const glucosesArray = Array.from(glucoses).map(glucose => ({
+            glucose: glucose.glucose,
+            timestamp: glucose.timestamp,
+        }));
+
+        return glucosesArray;
+    } catch (err) {
+        console.error('Error in readGlucoses:', err);
         return null;
     }
-
-    const glucosesArray = Array.from(glucoses).map(glucose => ({
-        glucose: glucose.glucose,
-        timestamp: glucose.timestamp,
-    }));
-
-    return glucosesArray;
 }
 
 export async function readLatestGlucose(realm) {
@@ -51,7 +58,6 @@ export async function readLatestGlucose(realm) {
         return null;
     }
 }
-
 
 export async function updateGlucose(realm) {
     if (!realm) {
@@ -84,20 +90,27 @@ export async function updateGlucose(realm) {
 }
 
 
-export async function readInsulins(realm) {
-    const insulins = realm.objects("InsulinInfo")
+export async function readInsulins(realm, fromDate, toDate) {
+    try {
+        const insulins = realm
+            .objects("InsulinInfo")
+            .filtered('timestamp >= $0 AND timestamp <= $1', fromDate, toDate);
 
-    if (!insulins) {
+        if (!insulins) {
+            return null;
+        }
+
+        const insulinsArray = Array.from(insulins).map(insulin => ({
+            insulin: insulin.insulin,
+            timestamp: insulin.timestamp,
+        }));
+
+        return insulinsArray;
+    } catch (err) {
+        console.error('Error in readInsulins:', err);
         return null;
     }
-
-    const insulinsArray = Array.from(insulins).map(insulin => ({
-        insulin: insulin.insulin,
-        timestamp: insulin.timestamp,
-    }));
-
-    return insulinsArray;
-};
+}
 
 export async function readLatestInsulin(realm) {
     try {
