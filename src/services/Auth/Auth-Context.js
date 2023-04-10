@@ -1,4 +1,5 @@
 import React, {useState, createContext} from 'react';
+import {GoogleAuthService} from './Auth-service';
 
 export const AuthenticationContext = createContext();
 
@@ -7,46 +8,32 @@ export const AuthenticationContextProvider = ({children}) => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
-  /* let auth;
-  auth.onAuthStateChanged(usr => {
-    if (usr) {
-      setUser(usr);
-      setIsLoading(false);
-    } else {
+  const handleLogin = async () => {
+    setIsLoading(true);
+    try {
+      const accessToken = await GoogleAuthService.login();
+      const userData = await fetch(
+        'https://www.googleapis.com/userinfo/v2/me',
+        {
+          headers: {Authorization: `Bearer ${accessToken}`},
+        },
+      ).then(res => res.json());
+      console.log('Google user data', userData);
+      setUser(userData);
+    } catch (e) {
+      setError(e);
+    } finally {
       setIsLoading(false);
     }
-  });
-*/
-  /*const onLogin = (email, password) => {
-    setIsLoading(true);
-    loginRequest(email, password)
-      .then(u => {
-        setUser(u);
-        setIsLoading(false);
-      })
-      .catch(e => {
-        setIsLoading(false);
-        setError(e);
-      });
-  };*/
-  /*
-  const onLogout = () => {
-    auth
-      .signOut()
-      .then(() => {
-        setUser(null);
-        setError(null);
-      })
-      .catch(error => alert(error.message));
-  };*/
-
+  };
   return (
     <AuthenticationContext.Provider
       value={{
-        isAuthenticated: !!user,
+        isAuthenticated: true,
         user,
         isLoading,
         error,
+        handleLogin,
       }}>
       {children}
     </AuthenticationContext.Provider>

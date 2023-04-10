@@ -1,5 +1,5 @@
-import React, {createContext, useEffect, useRef, useState} from 'react';
-import {GetFoodAsync, GetFoodAsyncMock} from './Food-Service';
+import React, {createContext, useEffect, useState} from 'react';
+import {GetFoodAsync} from './Food-Service';
 import debounce from 'lodash.debounce';
 
 export const FoodContext = createContext();
@@ -11,7 +11,6 @@ export const FoodContextProvider = ({children}) => {
   const [searchKeyword, setSearchKeyword] = useState('');
   // Add a new state for the selected foods
   const [selectedFoods, setSelectedFoods] = useState([]);
-
   const addDistinctFood = food => {
     setSelectedFoods(prevSelectedFoods => {
       const foodIndex = prevSelectedFoods.findIndex(f => f.name === food.name);
@@ -37,17 +36,32 @@ export const FoodContextProvider = ({children}) => {
     );
   };
 
-  // Function to add a food to the selected foods list
+  // Function to add food to the selected foods list
 
   useEffect(() => {
-    const fetchFoods = async () => {
-      const mockFoods = await GetFoodAsyncMock();
-      setFoods(mockFoods);
-      setFilteredFoods(mockFoods);
+    const fetchFoods = () => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const mockFoods = await GetFoodAsync();
+          setFoods(mockFoods);
+          setFilteredFoods(mockFoods);
+          resolve(mockFoods);
+        } catch (error) {
+          reject(error);
+        }
+      });
     };
 
-    fetchFoods();
+    fetchFoods()
+      .then(mockFoods => {
+        console.log('Foods fetched successfully', mockFoods);
+      })
+      .catch(error => {
+        console.error('Error fetching foods:', error);
+      });
   }, []);
+
+  // Your component rendering logic here
 
   useEffect(() => {
     if (searchKeyword) {
@@ -56,7 +70,7 @@ export const FoodContextProvider = ({children}) => {
       );
       setFilteredFoods(filtered);
     } else {
-      setFilteredFoods([]);
+      setFilteredFoods(foods);
     }
   }, [searchKeyword, foods]);
 

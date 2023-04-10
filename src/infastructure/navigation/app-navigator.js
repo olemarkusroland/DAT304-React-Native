@@ -8,8 +8,8 @@ import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 
 import Foods from '../../../assets/Foods.png';
 import settings from '../../../assets/settings.png';
-import { HomeNavigator } from './home-navigation';
-import { InformationNavigator } from './glucose-nav';
+import {HomeNavigator} from './home-navigation';
+import {InformationNavigator} from './glucose-nav';
 
 export const Tab = createBottomTabNavigator();
 
@@ -51,14 +51,10 @@ export const createScreenOptions = ({route}) => {
 };
 
 export const AppNavigator = () => (
-  <PaperProvider theme={theme}>
-    <FoodContextProvider>
-      <Tab.Navigator screenOptions={createScreenOptions}>
-        <Tab.Screen name="Home" component={HomeNavigator} />
-        <Tab.Screen name="Foods" component={FoodsNavigator} />
-        <Tab.Screen name="Info" component={InformationNavigator} />
-        <Tab.Screen name="Settings" component={SettingsNavigator} />
-      </Tab.Navigator>
-    </FoodContextProvider>
-  </PaperProvider>
+  <Tab.Navigator screenOptions={createScreenOptions}>
+    <Tab.Screen name="Home" component={HomeNavigator} />
+    <Tab.Screen name="Foods" component={FoodsNavigator} />
+    <Tab.Screen name="Info" component={InformationNavigator} />
+    <Tab.Screen name="Settings" component={SettingsNavigator} />
+  </Tab.Navigator>
 );

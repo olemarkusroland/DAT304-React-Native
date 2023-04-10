@@ -62,7 +62,6 @@ export const FoodScreen = ({navigation}) => {
       );
     }
   };
-
   const updateFoodsToRemove = (food, shouldAdd) => {
     if (shouldAdd) {
       setFoodsToRemove(prevFoodsToRemove => [...prevFoodsToRemove, food]);
