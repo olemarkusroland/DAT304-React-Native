@@ -25,6 +25,8 @@ import { realmOpen, deleteRealmFile } from './utils';
     await deleteRealmFile();
     const realm = await realmOpen();
 
+    addTestFoods(realm)
+
     console.log('\nTest createOrUpdateFood, readFood, and deleteFood:');
     await createOrUpdateFood(realm, 'Pizza', 250, 40, 10, 12);
     const pizza = await readFood(realm, 'Pizza');
@@ -70,3 +72,31 @@ import { realmOpen, deleteRealmFile } from './utils';
 
     realm.close();
 })();
+
+export async function addTestFoods(realm) {
+    const testFoods = [
+        { name: "Food 1", calories: 100, carbohydrates: 20, protein: 5, fat: 2 },
+        { name: "Food 2", calories: 150, carbohydrates: 30, protein: 10, fat: 5 },
+        { name: "Food 3", calories: 200, carbohydrates: 40, protein: 15, fat: 8 },
+        { name: "Food 4", calories: 250, carbohydrates: 50, protein: 20, fat: 11 },
+        { name: "Food 5", calories: 300, carbohydrates: 60, protein: 25, fat: 14 },
+        { name: "Food 6", calories: 350, carbohydrates: 70, protein: 30, fat: 17 },
+        { name: "Food 7", calories: 400, carbohydrates: 80, protein: 35, fat: 20 },
+        { name: "Food 8", calories: 450, carbohydrates: 90, protein: 40, fat: 23 },
+        { name: "Food 9", calories: 500, carbohydrates: 100, protein: 45, fat: 26 },
+        { name: "Food 10", calories: 550, carbohydrates: 110, protein: 50, fat: 29 },
+    ];
+
+    try {
+        await realm.write(() => {
+            for (const food of testFoods) {
+                realm.create("Food", food);
+            }
+        });
+
+        console.log("Test foods added to the database");
+    } catch (err) {
+        console.error("Error adding test foods:", err);
+    }
+}
+
