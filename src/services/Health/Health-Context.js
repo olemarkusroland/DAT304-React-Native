@@ -13,8 +13,8 @@ export const HealthContextProvider = ({children}) => {
     const fetchHealthData = async () => {
       setIsLoading(true);
       try {
-        const glucoseData = await HealthService.getGlucoseData();
-        const insulinData = await HealthService.getInsulinData();
+        const glucoseData = await HealthService.getGlucoseData2();
+        const insulinData = await HealthService.getInsulindata2();
         setGlucose(glucoseData);
         setInsulin(insulinData);
       } catch (error) {
@@ -23,7 +23,6 @@ export const HealthContextProvider = ({children}) => {
         setIsLoading(false);
       }
     };
-
     fetchHealthData()
       .then(e => console.log('Fetched data'))
       .catch(e => console.log(e));
