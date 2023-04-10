@@ -24,7 +24,7 @@ export const FoodScreen = ({navigation}) => {
   const SearchHeaderComponent = <Search />;
   const renderFood = useCallback(
     ({item}) => {
-      if (!item || !item.name || !item.carbs) {
+      if (!item || !item.name) {
         return null;
       }
 

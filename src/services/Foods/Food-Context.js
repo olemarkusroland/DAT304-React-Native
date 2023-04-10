@@ -39,29 +39,19 @@ export const FoodContextProvider = ({children}) => {
   // Function to add food to the selected foods list
 
   useEffect(() => {
-    const fetchFoods = () => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const mockFoods = await GetFoodAsync();
-          setFoods(mockFoods);
-          setFilteredFoods(mockFoods);
-          resolve(mockFoods);
-        } catch (error) {
-          reject(error);
-        }
-      });
+    const fetchFoods = async () => {
+      try {
+        const mockFoods = await GetFoodAsync();
+        setFoods(mockFoods);
+        setFilteredFoods(mockFoods);
+        console.log('Foods fetched successfully', mockFoods);
+      } catch (error) {
+        console.error('Error fetching foods:', error);
+      }
     };
 
-    fetchFoods()
-      .then(mockFoods => {
-        console.log('Foods fetched successfully', mockFoods);
-      })
-      .catch(error => {
-        console.error('Error fetching foods:', error);
-      });
+    fetchFoods();
   }, []);
-
-  // Your component rendering logic here
 
   useEffect(() => {
     if (searchKeyword) {
@@ -70,7 +60,7 @@ export const FoodContextProvider = ({children}) => {
       );
       setFilteredFoods(filtered);
     } else {
-      setFilteredFoods(foods);
+      setFilteredFoods([]);
     }
   }, [searchKeyword, foods]);
 

@@ -5,7 +5,7 @@ export const FoodInfo = React.memo(function FoodInfo({food}) {
   return (
     <View style={styles.container}>
       <Text style={styles.name}>{food.name}</Text>
-      <Text style={styles.description}>Carbs: {food.carbs}</Text>
+      <Text style={styles.description}>Carbs: {food.carbohydrates}</Text>
       <Text style={styles.grams}>{food.grams} </Text>
     </View>
   );

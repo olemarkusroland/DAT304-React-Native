@@ -4,7 +4,6 @@ import {realmOpen} from '../../../backend/realm/utils';
 import {createOrUpdateFood, readFoods} from '../../../backend/realm/CRUD';
 import RNFS from 'react-native-fs';
 import {Food} from '../../../backend/realm/schemas';
-const jsonData = require('./testfood.json');
 
 export const GetFoodAsyncMock = async () => {
   // Create an array of mock foods
@@ -161,19 +160,19 @@ const mockFood = [
 ];
 export const GetFoodAsync = async () => {
   // Create an array of mock foods
-  //let mockData;
-  //mockData = mockFood;
+  let mockData;
+  mockData = mockFood;
   const realm = await realmOpen();
-  //for (const foodItem of mockData) {
-  // await createOrUpdateFood(
-  // realm,
-  // foodItem.name,
-  // foodItem.calories,
-  // foodItem.carbohydrates,
-  // foodItem.protein,
-  // foodItem.fat,
-  // );
-  // }
+  for (const foodItem of mockData) {
+    await createOrUpdateFood(
+      realm,
+      foodItem.name,
+      foodItem.calories,
+      foodItem.carbohydrates,
+      foodItem.protein,
+      foodItem.fat,
+    );
+  }
   // Return the mock foods
   return await readFoods(realm);
 };
