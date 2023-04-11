@@ -26,10 +26,14 @@ export const AuthenticationContextProvider = ({children}) => {
       setIsLoading(false);
     }
   };
+
+  // Check if the user object is not null, if not, the user is authenticated
+  const isAuthenticated = user !== null;
+
   return (
     <AuthenticationContext.Provider
       value={{
-        isAuthenticated: true,
+        isAuthenticated,
         user,
         isLoading,
         error,

@@ -14,7 +14,7 @@ export const AccountNavigator = () => (
           backgroundColor: 'white',
         },
       }}
-      name="Covid Rooms"
+      name="Diabetes Managment App"
       component={AccountScreen}
     />
     <Stack.Screen

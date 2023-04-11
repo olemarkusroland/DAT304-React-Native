@@ -6,13 +6,12 @@ import {AuthenticationContext} from '../../services/Auth/Auth-Context';
 import {View, StyleSheet} from 'react-native';
 
 export const Navigation = () => {
-  //const {isAuthenticated} = useContext(AuthenticationContext);
+  const {isAuthenticated} = useContext(AuthenticationContext);
 
   return (
     <View style={styles.container}>
       <NavigationContainer>
-        {/*{isAuthenticated ? <AppNavigator /> : <AccountNavigator />}*/}
-        <AppNavigator />
+        {isAuthenticated ? <AppNavigator /> : <AccountNavigator />}
       </NavigationContainer>
     </View>
   );
