@@ -31,9 +31,6 @@ export const HomeScreen = ({navigation}) => {
     <View style={styles.container}>
       <Text style={styles.GlucoseValue}>{lastGlucoseValue}mg/dl</Text>
       <Text style={styles.TimeValue}>{lastTimeValue}</Text>
-      <TouchableOpacity onPress={() => navigation.navigate('Info')}>
-        <InformationChart glucoseData={glucose} insulinData={insulin || []} />
-      </TouchableOpacity>
     </View>
   );
 };

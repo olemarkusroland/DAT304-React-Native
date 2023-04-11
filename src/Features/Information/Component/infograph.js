@@ -8,13 +8,11 @@ const InformationChart = ({glucoseData, insulinData}) => {
     return <Text>No health data available</Text>;
   }
 
-  console.log(glucoseData, insulinData);
 
   const formatXLabeltest = (value, hours) => {
     if (!value) {
       return '';
     }
-    console.log(value);
     try {
       const test = moment.utc(value, 'YYYY-MM-DDTHH:mm:ss.sssZ', false);
 

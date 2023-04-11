@@ -48,10 +48,8 @@ const InformationScreen = ({navigation}) => {
       </View>
     );
   }
-  console.log(glucose, insulin);
   return (
     <View style={styles.container}>
-      <InformationChart glucoseData={glucose} insulinData={insulin || []} />
       <View style={food_styles.container}>
         <TouchableOpacity
           style={{

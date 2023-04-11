@@ -40,7 +40,6 @@ export const HealthService = {
           return [];
         }
       }
-      console.log(insulinData);
       return insulinData;
     } catch (error) {
       console.log('Error retrieving glucose data:', error);
@@ -54,9 +53,7 @@ export const HealthService = {
       fromDate.setDate(fromDate.getDate() - 1); // 7 days ago
       const toDate = new Date(); // today
 
-      console.log(realm, fromDate, toDate);
       let glucoseData = await readGlucoses(realm, fromDate, toDate);
-      console.log(glucoseData);
 
       if (glucoseData === null) {
         console.log(glucoseData, 'glucoseData in service is null');
