@@ -1,12 +1,29 @@
-import React, {useContext} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
+import {View, StyleSheet} from 'react-native';
+import Realm from 'realm';
+
+import {realmOpen, deleteRealmFile} from '../../../backend/realm/utils';
+import {useBackgroundFetch} from '../../../backend/background-fetch';
+import {AuthenticationContext} from '../../services/Auth/Auth-Context';
 import {AppNavigator} from './app-navigator';
 import {AccountNavigator} from './account-navigation';
 import {NavigationContainer} from '@react-navigation/native';
-import {AuthenticationContext} from '../../services/Auth/Auth-Context';
-import {View, StyleSheet} from 'react-native';
 
-export const Navigation = () => {
+const Navigation = () => {
+  const [realm, setRealm] = useState(null);
   const {isAuthenticated} = useContext(AuthenticationContext);
+
+  useEffect(() => {
+    const initializeRealm = async () => {
+      const r = await realmOpen();
+      setRealm(r);
+    };
+    if (isAuthenticated) {
+      initializeRealm();
+    }
+  }, [isAuthenticated]);
+
+  useBackgroundFetch(realm);
 
   return (
     <View style={styles.container}>
@@ -22,3 +39,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default Navigation;

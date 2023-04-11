@@ -20,11 +20,11 @@ export const AccountScreen = ({navigation}) => {
   return (
       <View style={local.container}>
         <Button
-            title={'Login With google'}
-            style={local.button}
-            onPress={handleClick}>
-          {isLoading}
-        </Button>
+          title={isLoading ? 'Logging in...' : 'Login With Google'}
+          style={local.button}
+          onPress={handleClick}
+          disabled={isLoading}
+        />
       </View>
   );
 };
