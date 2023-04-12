@@ -7,7 +7,7 @@ import {useBackgroundFetch} from '../../../backend/background-fetch';
 import {AuthenticationContext} from '../../services/Auth/Auth-Context';
 import {AppNavigator} from './app-navigator';
 import {AccountNavigator} from './account-navigation';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';   
 
 const Navigation = () => {
   const [realm, setRealm] = useState(null);
@@ -15,7 +15,8 @@ const Navigation = () => {
 
   useEffect(() => {
     const initializeRealm = async () => {
-      const r = await realmOpen();
+        const r = await realmOpen();
+        
       setRealm(r);
     };
     if (isAuthenticated) {
@@ -23,7 +24,8 @@ const Navigation = () => {
     }
   }, [isAuthenticated]);
 
-  useBackgroundFetch(realm);
+  //deleteRealmFile()
+  useBackgroundFetch(realm, isAuthenticated);
 
   return (
     <View style={styles.container}>

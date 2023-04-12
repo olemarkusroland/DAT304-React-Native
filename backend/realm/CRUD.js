@@ -145,17 +145,14 @@ export async function updateInsulin(realm) {
     console.error('updateInsulin: Realm instance is null');
     return;
   }
-
   const latestInsulin = await readLatestInsulin(realm);
-
   const currentDate = new Date();
   const fromDate =
     latestInsulin === null ? getLastMonthDate() : new Date(latestInsulin);
-
   const result = await UseInsulinData(
     fromDate.toISOString(),
     currentDate.toISOString(),
-  );
+    );
 
   if (result.length !== 0) {
     console.log('Adding ' + result.length + ' insulin entries.');

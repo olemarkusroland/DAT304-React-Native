@@ -1,36 +1,59 @@
-import {useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import BackgroundFetch from 'react-native-background-fetch';
+import { updateGlucose, updateInsulin } from './realm/CRUD.js';
 
-export const useBackgroundFetch = (isAuthenticated, realm) => {
-  useEffect(() => {
-    const fetchDataInBackground = async () => {
-      // Add your background fetch logic here
-    };
+export const useIsLoading = () => {
+    const [isLoading, setIsLoading] = useState(true);
+    return [isLoading, setIsLoading];
+};
 
-    // Only register the background fetch when the user is authenticated
-    if (isAuthenticated) {
-      BackgroundFetch.configure(
-        {
-          minimumFetchInterval: 15, // Fetch interval in minutes
-        },
-        async () => {
-          console.log('[BackgroundFetch] Headless start');
-          await fetchDataInBackground();
-          BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA);
-        },
-        (error) => {
-          console.log('[BackgroundFetch] error', error);
-        },
-      );
+export const useBackgroundFetch = (realm, isAuthenticated) => {
+    const [isLoading, setIsLoading] = useIsLoading();
 
-      // Add your event listener here
-    }
+    useEffect(() => {
+        if (realm && isAuthenticated) {
+            const initBackgroundFetch = async () => {
+                await BackgroundFetch.configure(
+                    { minimumFetchInterval: 15 },
+                    async (taskId) => {
+                        console.log('[BackgroundFetch] taskId:', taskId);
 
-    // Return a cleanup function that will unregister the background fetch
-    return () => {
-      if (isAuthenticated) {
-        BackgroundFetch.stop();
-      }
-    };
-  }, [isAuthenticated, realm]);
+                        setIsLoading(true);
+
+                        await updateGlucose(realm);
+                        await updateInsulin(realm);
+
+                        setIsLoading(false);
+
+                        BackgroundFetch.finish(taskId);
+                    },
+                    (taskId) => {
+                        console.warn('[BackgroundFetch] taskId TIMEOUT:', taskId);
+                        BackgroundFetch.finish(taskId);
+                    }
+                );
+
+                const status = await BackgroundFetch.status();
+                console.log('[BackgroundFetch] status:', status);
+            };
+
+            initBackgroundFetch();
+        } else {
+            console.log('useBackgroundFetch: No realm or not authenticated');
+        }
+    }, [realm, isAuthenticated]);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            const scheduleTestTask = async () => {
+                await BackgroundFetch.scheduleTask({
+                    taskId: 'test-background-fetch',
+                    forceAlarmManager: true,
+                    delay: 4000,
+                });
+            };
+
+            scheduleTestTask();
+        }
+    }, [isAuthenticated]);
 };

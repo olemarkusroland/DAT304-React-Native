@@ -7,33 +7,35 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import InformationChart from '../../Information/Component/infograph';
 import {HealthContext} from '../../../services/Health/Health-Context';
 
 export const HomeScreen = ({navigation}) => {
-  const {glucose, insulin, isLoading} = useContext(HealthContext);
+    const { glucose, insulin } = useContext(HealthContext);
+    try {
+        if (glucose.length > 0) {
+            const lastGlucoseValue = glucose[glucose.length - 1].glucose;
+            const lastTimeValue = glucose[glucose.length - 1].timestamp.toLocaleString();
 
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
-  const lastGlucoseValue =
-    glucose.length > 0 ? glucose[glucose.length - 1].glucose : null;
-  const lastTimeValue =
-    glucose.length > 0
-      ? glucose[glucose.length - 1].timestamp.toLocaleString()
-      : null;
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.GlucoseValue}>{lastGlucoseValue}mg/dl</Text>
-      <Text style={styles.TimeValue}>{lastTimeValue}</Text>
-    </View>
-  );
+            return (
+                <View style={styles.container}>
+                        <Text style={styles.GlucoseValue}>{lastGlucoseValue}mg/dl</Text>
+                        <Text style={styles.TimeValue}>{lastTimeValue}</Text>
+                </View>
+            );
+        }
+        else {
+            return (
+                <View style={styles.container}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+            );
+        }
+    } catch (error) {
+        
+    }
 };
+
 
 const styles = StyleSheet.create({
   container: {

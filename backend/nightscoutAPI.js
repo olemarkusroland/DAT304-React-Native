@@ -27,7 +27,7 @@ export const UseInsulinData = async (from, to) => {
     const responseJson = await response.json();
     return responseJson;
   } catch (error) {
-    console.error(error);
+    console.error("UseInsulinData: ", error);
     throw error;
   }
 };

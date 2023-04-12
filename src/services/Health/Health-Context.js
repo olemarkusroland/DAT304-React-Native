@@ -9,7 +9,6 @@ export const HealthContext = createContext();
 export const HealthContextProvider = ({children}) => {
   const [glucose, setGlucose] = useState([]);
   const [insulin, setInsulin] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [lastGlucoseValue, setLastGlucoseValue] = useState(null);
   const [lastTimeValue, setLastTimeValue] = useState(null);
 
@@ -41,8 +40,6 @@ export const HealthContextProvider = ({children}) => {
       r.objects('GlucoseInfo').addListener(glucoseListener);
       r.objects('InsulinInfo').addListener(insulinListener);
 
-      setIsLoading(true);
-
       try {
         const glucoseData = await HealthService.getGlucoseData2(r);
         const insulinData = await HealthService.getInsulindata2(r);
@@ -50,8 +47,6 @@ export const HealthContextProvider = ({children}) => {
         setInsulin(insulinData);
       } catch (error) {
         console.error('Error fetching health data:', error);
-      } finally {
-        setIsLoading(false);
       }
 
       // Clean up the listeners when the component unmounts
@@ -78,7 +73,6 @@ export const HealthContextProvider = ({children}) => {
       value={{
         glucose,
         insulin,
-        isLoading,
         lastGlucoseValue,
         lastTimeValue,
       }}>
