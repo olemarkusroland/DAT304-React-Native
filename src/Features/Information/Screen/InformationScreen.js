@@ -39,9 +39,26 @@ const placebodata = {
 };
 
 const InformationScreen = ({navigation}) => {
-  const {glucose, insulin, isLoading} = useContext(HealthContext);
-
-  if (isLoading) {
+  const {glucose, insulin, isLoading,} = useContext(HealthContext);
+  try {
+    if (glucose.length > 0) {
+        return (
+            <View style={styles.container}>
+              <InformationChart glucoseData={glucose}></InformationChart>
+            </View>
+        );
+    }
+    else {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
+} catch (error) {
+    
+}
+  /* if (isLoading) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -50,25 +67,9 @@ const InformationScreen = ({navigation}) => {
   }
   return (
     <View style={styles.container}>
-      <View style={food_styles.container}>
-        <TouchableOpacity
-          style={{
-            borderRadius: 5,
-            borderColor: '#ddd',
-            flex: 1,
-            backgroundColor: '#ddd',
-          }}
-          onPress={() => navigation.navigate('RecentFood')}>
-          <Text style={food_styles.titleText}>Recently Eaten Food</Text>
-          <FlatList
-            data={foodlist}
-            renderItem={renderFoodItem}
-            keyExtractor={item => item.id}
-          />
-        </TouchableOpacity>
-      </View>
+      <InformationChart glucoseData={glucose}></InformationChart>
     </View>
-  );
+  ); */
 };
 const styles = StyleSheet.create({
   container: {

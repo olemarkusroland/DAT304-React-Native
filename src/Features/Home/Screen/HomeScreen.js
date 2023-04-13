@@ -15,8 +15,6 @@ export const HomeScreen = ({navigation}) => {
         if (glucose.length > 0) {
             const lastGlucoseValue = glucose[glucose.length - 1].glucose;
             const lastTimeValue = glucose[glucose.length - 1].timestamp.toLocaleString();
-
-
             return (
                 <View style={styles.container}>
                         <Text style={styles.GlucoseValue}>{lastGlucoseValue}mg/dl</Text>
