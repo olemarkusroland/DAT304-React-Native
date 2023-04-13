@@ -38,8 +38,6 @@ export const useBackgroundFetch = (realm, isAuthenticated) => {
             };
 
             initBackgroundFetch();
-        } else {
-            console.log('useBackgroundFetch: No realm or not authenticated');
         }
     }, [realm, isAuthenticated]);
 

@@ -1,13 +1,11 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {FoodsNavigator} from './Food-nav';
-import {FoodContextProvider} from '../../services/Foods/Food-Context';
 import {SettingsNavigator} from './settings-navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import connectivity from '../connectivity';
 
-import Foods from '../../../assets/Foods.png';
-import settings from '../../../assets/settings.png';
 import {HomeNavigator} from './home-navigation';
 import {InformationNavigator} from './glucose-nav';
 
@@ -54,12 +52,13 @@ export const AppNavigator = () => (
     <Tab.Navigator screenOptions={createScreenOptions}>
         <Tab.Screen
             name="Home"
-            component={HomeNavigator}
-            options={{ title: 'Home' }} // Add this line
+            component={connectivity(HomeNavigator)}
+            options={{ title: 'Home' }}
         />
-        <Tab.Screen name="Foods" component={FoodsNavigator} />
-        <Tab.Screen name="Info" component={InformationNavigator} />
-        <Tab.Screen name="Settings" component={SettingsNavigator} />
+        <Tab.Screen name="Foods" component={connectivity(FoodsNavigator)} />
+        <Tab.Screen name="Info" component={connectivity(InformationNavigator)} />
+        <Tab.Screen name="Settings" component={connectivity(SettingsNavigator)} />
     </Tab.Navigator>
 );
+
 
