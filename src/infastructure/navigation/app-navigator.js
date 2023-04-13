@@ -51,10 +51,15 @@ export const createScreenOptions = ({route}) => {
 };
 
 export const AppNavigator = () => (
-  <Tab.Navigator screenOptions={createScreenOptions}>
-    <Tab.Screen name="Home" component={HomeNavigator} />
-    <Tab.Screen name="Foods" component={FoodsNavigator} />
-    <Tab.Screen name="Info" component={InformationNavigator} />
-    <Tab.Screen name="Settings" component={SettingsNavigator} />
-  </Tab.Navigator>
+    <Tab.Navigator screenOptions={createScreenOptions}>
+        <Tab.Screen
+            name="Home"
+            component={HomeNavigator}
+            options={{ title: 'Home' }} // Add this line
+        />
+        <Tab.Screen name="Foods" component={FoodsNavigator} />
+        <Tab.Screen name="Info" component={InformationNavigator} />
+        <Tab.Screen name="Settings" component={SettingsNavigator} />
+    </Tab.Navigator>
 );
+
