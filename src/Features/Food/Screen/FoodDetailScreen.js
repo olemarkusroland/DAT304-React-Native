@@ -1,6 +1,6 @@
 import React, { useContext, useState, useLayoutEffect } from 'react';
 import {
-    Button,
+    TouchableOpacity,
     Text,
     TextInput,
     View,
@@ -59,11 +59,9 @@ export const FoodDetailScreen = ({ route, navigation }) => {
                     justifyContent: 'flex-end',
                 }}
             >
-                <Button
-                    title="Add to list"
-                    onPress={addToSelectedFoods}
-                    color="#2196F3"
-                />
+                <TouchableOpacity style={styles.button} onPress={addToSelectedFoods}>
+                    <Text style={styles.buttonText}>Add to selected</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
