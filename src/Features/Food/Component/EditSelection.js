@@ -1,52 +1,38 @@
-import React, {useContext, useState} from 'react';
-import {IconButton, Searchbar} from 'react-native-paper';
-import {FoodContext} from '../../../services/Foods/Food-Context';
-import {styles} from '../../../Styles';
-import {Text, TouchableOpacity, View} from 'react-native';
-import {Checkbox} from 'react-native-paper';
-import {FoodInfo} from './FoodInfo';
+import React, { useState } from 'react';
+import { View, TouchableOpacity } from 'react-native';
+import { Checkbox } from 'react-native-paper';
+import { FoodInfo } from './FoodInfo';
 
 export const EditSelection = ({
-  item,
-  onPress,
-  selectedItems,
-  setSelectedItems,
-  ShowIconButtons,
-  updateFoodsToRemove,
+    item,
+    onPress,
+    ShowIconButtons,
+    updateFoodsToRemove,
 }) => {
-  const [isSelected, setIsSelected] = useState(false);
+    const [checked, setChecked] = useState(false);
 
-  const handlePress = () => {
-    if (onPress) {
-      onPress(item);
-    }
-  };
+    const handleChecked = () => {
+        setChecked(!checked);
+        updateFoodsToRemove(item, !checked);
+    };
 
-  const handleSelect = () => {
-    setIsSelected(!isSelected);
-    updateFoodsToRemove(item, !isSelected);
-  };
+    const handlePress = () => {
+        if (!ShowIconButtons) {
+            onPress();
+        }
+    };
 
-  return (
-    <TouchableOpacity onPress={handlePress}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View style={{flex: ShowIconButtons ? 0.85 : 1}}>
-          <FoodInfo food={item} />
+    return (
+        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+            {ShowIconButtons && (
+                <Checkbox
+                    status={checked ? 'checked' : 'unchecked'}
+                    onPress={handleChecked}
+                />
+            )}
+            <TouchableOpacity onPress={handlePress} style={{ flex: 1 }}>
+                <FoodInfo food={item} isSelected={true} />
+            </TouchableOpacity>
         </View>
-        <View style={{flex: 0.15}}>
-          {ShowIconButtons && (
-            <IconButton
-              icon={
-                isSelected ? 'check-circle' : 'checkbox-blank-circle-outline'
-              }
-              size={20}
-              onPress={() => {
-                handleSelect(item);
-              }}
-            />
-          )}
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+    );
 };

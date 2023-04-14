@@ -1,46 +1,70 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState, useLayoutEffect } from 'react';
 import {
-  Button,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Button,
+    Text,
+    TextInput,
+    View,
 } from 'react-native';
-import {Divider, List} from 'react-native-paper';
-import {Chart} from '../Component/Chart';
-import {FoodContext} from '../../../services/Foods/Food-Context';
-import {styles} from '../../../Styles';
+import { FoodContext } from '../../../services/Foods/Food-Context';
+import { styles } from '../../../Styles';
 
-export const FoodDetailScreen = ({route, navigation}) => {
-  const {food} = route.params;
-  const {AddFood} = useContext(FoodContext);
-  const [grams, setGrams] = useState(0);
+export const FoodDetailScreen = ({ route, navigation }) => {
+    const { food } = route.params;
+    const { AddFood } = useContext(FoodContext);
+    const [grams, setGrams] = useState(0);
+    const [carbs, setCarbs] = useState(0);
 
-  const addToSelectedFoods = () => {
-    const selectedFood = {
-      ...food,
-      grams: Number(grams),
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: food.name,
+        });
+    }, [navigation, food.name]);
+
+    const addToSelectedFoods = () => {
+        const selectedFood = {
+            ...food,
+            grams: Number(grams),
+        };
+        AddFood(selectedFood);
+        navigation.goBack();
     };
-    AddFood(selectedFood);
-    navigation.goBack();
-  };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.name}>{food.name}</Text>
-      <Text style={styles.description}>{food.carbs}</Text>
-      {/* Add more fields from the mock data if needed */}
+    const handleGramsChange = (input) => {
+        setGrams(Number(input));
+        setCarbs(Number(food.carbohydrates * input / 1000).toFixed(0));
+    };
 
-      <Text style={styles.label}>Grams:</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="number-pad"
-        onChangeText={text => setGrams(Number(text))}
-        value={grams.toString()}
-      />
-      <Button title="Add to list" onPress={addToSelectedFoods} />
-    </View>
-  );
+    return (
+        <View style={styles.container}>
+            <Text style={[styles.label, { fontSize: 18 }]}>
+                Carbs/kg: {Number(food.carbohydrates).toFixed(0)}
+            </Text>
+
+            <Text style={[styles.label, { fontSize: 18 }]}>
+                Carbs/Amount: {carbs}
+            </Text>
+
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={[styles.label, { fontSize: 18 }]}>Grams:</Text>
+                <TextInput
+                    style={[styles.input, { height: 40 }]}
+                    keyboardType="number-pad"
+                    onChangeText={handleGramsChange}
+                    value={grams.toString()}
+                />
+            </View>
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: 'flex-end',
+                }}
+            >
+                <Button
+                    title="Add to list"
+                    onPress={addToSelectedFoods}
+                    color="#2196F3"
+                />
+            </View>
+        </View>
+    );
 };

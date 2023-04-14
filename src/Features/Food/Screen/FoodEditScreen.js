@@ -1,45 +1,69 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState, useLayoutEffect } from 'react';
 import {
-  Button,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Button,
+    Text,
+    TextInput,
+    View,
+    TouchableOpacity,
 } from 'react-native';
-import {Divider, List} from 'react-native-paper';
-import {Chart} from '../Component/Chart';
-import {FoodContext} from '../../../services/Foods/Food-Context';
-import {styles} from '../../../Styles';
+import { FoodContext } from '../../../services/Foods/Food-Context';
+import { styles } from '../../../Styles';
 
-export const FoodEditScreen = ({route, navigation}) => {
-  const {food} = route.params;
-  const {AddFood} = useContext(FoodContext);
-  const [grams, setGrams] = useState(food.grams);
+export const FoodEditScreen = ({ route, navigation }) => {
+    const { food } = route.params;
+    const { AddFood } = useContext(FoodContext);
+    const [grams, setGrams] = useState(food.grams);
+    const [carbs, setCarbs] = useState(Number(food.carbohydrates * food.grams / 1000).toFixed(0));
 
-  const addToSelectedFoods = () => {
-    const selectedFood = {
-      ...food,
-      grams: Number(grams),
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: food.name,
+        });
+    }, [navigation, food.name]);
+
+    const addToSelectedFoods = () => {
+        const selectedFood = {
+            ...food,
+            grams: Number(grams),
+        };
+        AddFood(selectedFood);
+        navigation.goBack();
     };
-    AddFood(selectedFood);
-    navigation.goBack();
-  };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.name}>{food.name}</Text>
-      <Text style={styles.description}>{food.carbs}</Text>
-      {/* Add more fields from the mock data if needed */}
+    const handleGramsChange = (input) => {
+        setGrams(Number(input));
+        setCarbs(Number(food.carbohydrates * input / 1000).toFixed(0));
+    };
 
-      <Text style={styles.label}>Grams:</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="number-pad"
-        onChangeText={text => setGrams(Number(text))}
-        value={grams.toString()}
-      />
-      <Button title="Confirm Change" onPress={addToSelectedFoods} />
-    </View>
-  );
+    return (
+        <View style={styles.container}>
+            <Text style={[styles.label, { fontSize: 18 }]}>
+                Carbs/kg: {Number(food.carbohydrates).toFixed(0)}
+            </Text>
+
+            <Text style={[styles.label, { fontSize: 18 }]}>
+                Carbs/Amount: {carbs}
+            </Text>
+
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={[styles.label, { fontSize: 18 }]}>Amount:</Text>
+                <TextInput
+                    style={[styles.input, { height: 40 }]}
+                    keyboardType="number-pad"
+                    onChangeText={handleGramsChange}
+                    value={grams.toString()}
+                />
+            </View>
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: 'flex-end',
+                }}
+            >
+                <TouchableOpacity style={styles.button} onPress={addToSelectedFoods}>
+                    <Text style={styles.buttonText}>Confirm Change</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 };
