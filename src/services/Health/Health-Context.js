@@ -1,82 +1,66 @@
-import React, {useState, createContext, useEffect} from 'react';
-import {GoogleAuthService} from './Auth-service';
-import {HealthService} from './Health-Service';
-import Realm from 'realm';
-import {deleteRealmFile, realmOpen} from '../../../backend/realm/utils';
+import React, { useState, createContext, useEffect } from 'react';
+import { HealthService } from './Health-Service';
+import { realmOpen } from '../../../backend/realm/utils';
 
 export const HealthContext = createContext();
 
-export const HealthContextProvider = ({children}) => {
-  const [glucose, setGlucose] = useState([]);
-  const [insulin, setInsulin] = useState([]);
-  const [lastGlucoseValue, setLastGlucoseValue] = useState(null);
-  const [lastTimeValue, setLastTimeValue] = useState(null);
+export const HealthContextProvider = ({ children }) => {
+    const [glucose, setGlucose] = useState([]);
+    const [insulin, setInsulin] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const r = await realmOpen();
+    useEffect(() => {
+        const fetchData = async () => {
+            const realm = await realmOpen();
 
-      // Set up a listener for changes in the glucose and insulin collections
-      const glucoseListener = (newGlucose, changes) => {
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
+            const glucoseListener = (newGlucose, changes) => {
+                const oneWeekAgo = new Date();
+                oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-        const glucoseEntriesLast7Days = newGlucose.filter(
-          entry => new Date(entry.timestamp) >= oneWeekAgo,
-        );
-        setGlucose(glucoseEntriesLast7Days);
-      };
+                const glucoseEntriesLast7Days = newGlucose.filter(
+                    entry => new Date(entry.timestamp) >= oneWeekAgo,
+                );
+                setGlucose(glucoseEntriesLast7Days);
+            };
 
-      const insulinListener = (newInsulin, changes) => {
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
+            const insulinListener = (newInsulin, changes) => {
+                const oneWeekAgo = new Date();
+                oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-        const insulinEntriesLast7Days = newInsulin.filter(
-          entry => new Date(entry.timestamp) >= oneWeekAgo,
-        );
-        setInsulin(insulinEntriesLast7Days);
-      };
+                const insulinEntriesLast7Days = newInsulin.filter(
+                    entry => new Date(entry.timestamp) >= oneWeekAgo,
+                );
+                setInsulin(insulinEntriesLast7Days);
+            };
 
-      r.objects('GlucoseInfo').addListener(glucoseListener);
-      r.objects('InsulinInfo').addListener(insulinListener);
+            realm.objects('GlucoseInfo').addListener(glucoseListener);
+            realm.objects('InsulinInfo').addListener(insulinListener);
 
-      try {
-        const glucoseData = await HealthService.getGlucoseData2(r);
-        const insulinData = await HealthService.getInsulindata2(r);
-        setGlucose(glucoseData);
-        setInsulin(insulinData);
-      } catch (error) {
-        console.error('Error fetching health data:', error);
-      }
+            try {
+                const glucoseData = await HealthService.getGlucoses(realm);
+                const insulinData = await HealthService.getInsulins(realm);
+                setGlucose(glucoseData);
+                setInsulin(insulinData);
+            } catch (error) {
+                console.error('Error fetching health data:', error);
+            }
 
-      // Clean up the listeners when the component unmounts
-      return () => {
-        r.objects('GlucoseInfo').removeListener(glucoseListener);
-        r.objects('InsulinInfo').removeListener(insulinListener);
-        r.close();
-      };
-    };
+            return () => {
+                realm.objects('GlucoseInfo').removeListener(glucoseListener);
+                realm.objects('InsulinInfo').removeListener(insulinListener);
+                realm.close();
+            };
+        };
 
-    fetchData();
-  }, []);
-  useEffect(() => {
-    if (glucose.length > 0) {
-      setLastGlucoseValue(glucose[glucose.length - 1].glucose);
-      setLastTimeValue(glucose[glucose.length - 1].timestamp.toLocaleString());
-    } else {
-      setLastGlucoseValue(null);
-      setLastTimeValue(null);
-    }
-  }, [glucose]);
-  return (
-    <HealthContext.Provider
-      value={{
-        glucose,
-        insulin,
-        lastGlucoseValue,
-        lastTimeValue,
-      }}>
-      {children}
-    </HealthContext.Provider>
-  );
+        fetchData();
+    }, []);
+
+    return (
+        <HealthContext.Provider
+            value={{
+                glucose,
+                insulin,
+            }}>
+            {children}
+        </HealthContext.Provider>
+    );
 };
