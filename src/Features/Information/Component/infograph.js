@@ -55,14 +55,18 @@ const InformationChart = ({glucoseData}) => {
 
 
 
-  // GET THIS TO UPDATE WHENEVER SORTEDUPDATEDLABELS CHANGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  const formatXLabel = (sortedUpdatedLabels,) => {
+  // GET THIS TO UPDATE WHENEVER SORTEDUPDATEDLABELS CHANGE !!!!!!!!!!!
+
+  // check in the return (formatxlabel)
+
+  
+  const formatXLabel = (sortedUpdatedLabels) => {
 
     const time = moment(sortedUpdatedLabels, 'HH:mm');
     //console.log('time: ',time);
-    //console.log(sortedUpdatedLabels);
+    //console.log('sorted time:', sortedUpdatedLabels);
     if (time.minute() === 0){
-      //console.log(time.format('MMM Do YY, HH:mm'))
+      //console.log('returned time: ', time.format('MMM Do YY, HH:mm'))
       return time.format('HH:mm');
       
     } else {
