@@ -1,4 +1,4 @@
-import {UseGlucoseData, UseInsulinData} from '../nightscoutAPI';
+import {UseGlucoseData, UseInsulinBasalData, UseInsulinData} from '../nightscoutAPI';
 import {realmOpen} from './utils';
 
 function autoIncrementId(realm, modelName) {
@@ -141,6 +141,10 @@ export async function readLatestInsulin(realm) {
 }
 
 export async function updateInsulin(realm) {
+    const allObjects = realm.objects('InsulinInfo');
+    realm.write(() => {
+        realm.delete(allObjects);
+    });
   if (!realm) {
     console.error('updateInsulin: Realm instance is null');
     return;
@@ -153,25 +157,142 @@ export async function updateInsulin(realm) {
     fromDate.toISOString(),
     currentDate.toISOString(),
     );
+    if (result.length !== 0) {
 
-  if (result.length !== 0) {
-    console.log('Adding ' + result.length + ' insulin entries.');
+        console.log('Adding ' + result.length + ' insulin entries.');
+       
+            for (const insulinInfo of result) {
+              
+                if (insulinInfo.insulin != null && insulinInfo.created_at != null) {
 
-    await realm.write(() => {
-      for (const insulinInfo of result) {
-        if (insulinInfo.insulin != null && insulinInfo.created_at != null) {
-          realm.create('InsulinInfo', {
-            insulin: insulinInfo.insulin,
-            timestamp: insulinInfo.created_at,
-          });
+                    var basal = await getBasal(insulinInfo.created_at.toString());
+                   
+                    
+                    var parse_basal = parseFloat(basal);
+
+                    var parse_insulin = parseFloat(insulinInfo.insulin);
+
+
+                    var insulin = parse_insulin + parse_basal;
+
+                    var date = insulinInfo.created_at;
+
+                    await realm.write(async () => {
+                        realm.create('InsulinInfo', {
+                            insulin: insulin,
+                            timestamp: date,
+                        });
+                    });
+                }
+                
+            }
+      
+
+        console.log('Database: Insulin updated');
+    } else {
+
+        var date = currentDate.toISOString();
+        var basal = await getBasal(date);
+        var insulin = parseFloat(basal);
+        console.log('No insulin entries to add to database. but added Basal...')
+        await realm.write(() => {
+            realm.create('InsulinInfo', {
+                insulin: insulin,
+                timestamp: date,
+            });
+        });
+          
+    }
+}
+
+export async function getBasal(date_time)
+{
+   
+    const basal = await UseInsulinBasalData();
+    var current_newest = null;
+    var current_value = null;
+    if (basal.length > 0) {
+
+        for (let i = 0; i < basal.length; i++) {
+            current_newest = getNewestDate(date_time, basal[i].created_at);
+            if (current_newest["_j"] == date_time) {
+                var dateStrings = [];
+                var timeStrings = [];
+                var dateAddstrings = [];
+
+                if (basal[i].store["Pattern 1"].basal.length != 0) { dateStrings.push(basal[i].created_at); }
+                for (let k = 0; k < basal[i].store["Pattern 1"].basal.length; k++) {
+
+                    timeStrings.push(basal[i].store["Pattern 1"].basal[k].timeAsSeconds)
+                }
+
+                for (let j = 0; j < basal[i].store["Pattern 1"].basal.length; j++) {
+                    var originalDate = dateStrings[j];
+                    var dateObject = new Date(originalDate);
+                    dateObject.getTime() + parseInt(timeStrings[j]) * 1000;
+                    dateAddstrings.push(new Date(dateObject.getTime() + parseInt(timeStrings[j]) * 1000));
+                    dateStrings.push(dateAddstrings[j].toISOString());
+                    
+                }
+                var current_value = null;
+             
+                for (let l = 0; l < dateAddstrings.length; l++) {
+                    current_value = getNewestDate(date_time, dateAddstrings[l]);
+                    if (current_value == date_time) {
+                         return basal[i].store["Pattern 1"].basal[l].value; }
+                        if (l == dateAddstrings.length - 1) {
+                             return basal[i].store["Pattern 1"].basal[l].value; }
+                }
+               
+                
+            }
+            else if (i == basal.length - 1) {
+                current_newest = getNewestDate(date_time, basal[i].created_at);
+                
+                    var dateStrings = [];
+                    var timeStrings = [];
+                    var dateAddstrings = [];
+                    if (basal[i].store["Pattern 1"].basal.length != 0) { dateStrings.push(basal[i].created_at); }
+                    for (let k = 0; k < basal[i].store["Pattern 1"].basal.length; k++) {
+
+                        timeStrings.push(basal[i].store["Pattern 1"].basal[k].timeAsSeconds)
+                    }
+
+                    for (let j = 0; j < basal[i].store["Pattern 1"].basal.length; j++) {
+                        var originalDate = dateStrings[j];
+                        var dateObject = new Date(originalDate);
+                        dateObject.getTime() + parseInt(timeStrings[j]) * 1000;
+                        dateAddstrings.push(new Date(dateObject.getTime() + parseInt(timeStrings[j]) * 1000));
+                        dateStrings.push(dateAddstrings[j].toISOString());
+                
+                    }
+                    var current_value = null;
+                    var current_value = null;
+
+                    for (let l = 0; l < dateAddstrings.length; l++) {
+                        current_value = getNewestDate(date_time, dateAddstrings[l]);
+                        if (current_value == date_time) { return basal[i].store["Pattern 1"].basal[l].value; }
+                            if (l == dateAddstrings.length - 1) { return basal[i].store["Pattern 1"].basal[l].value; }
+                        
+                    }
+                   
+                
+            } 
+            
         }
-      }
-    });
+    } 
+    return 0;
+} 
 
-    console.log('Database: Insulin updated');
-  } else {
-    console.log('No insulin entries to add to database.');
-  }
+export async function getNewestDate(first_date, second_date) {
+    const firstDate = new Date(first_date);
+    const secondDate = new Date(second_date);
+    
+    if (firstDate.getTime() < secondDate.getTime()) {
+        return second_date;
+    } else {
+        return first_date;
+    }
 }
 
 export async function readFoods(realm) {

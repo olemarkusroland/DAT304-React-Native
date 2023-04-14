@@ -17,7 +17,6 @@ export const UseGlucoseData = async (from, to) => {
 
 export const UseInsulinData = async (from, to) => {
   try {
-    //console.log(from + " ___ " + to + "---->" + `https://oskarnightscoutweb1.azurewebsites.net/api/v1/treatments.json?find[created_at][$gte]=${from}&find[created_at][$lte]=${to}&count=all`);
     const response = await fetch(
       `https://oskarnightscoutweb1.azurewebsites.net/api/v1/treatments.json?find[created_at][$gte]=${from}&find[created_at][$lte]=${to}&count=all`,
       {
@@ -32,6 +31,24 @@ export const UseInsulinData = async (from, to) => {
   }
 };
 
+
+export const UseInsulinBasalData = async () => {
+    try {
+        const response = await fetch(
+            `https://oskarnightscoutweb1.azurewebsites.net/api/v1/profile.json?&count=3`,
+            {
+                method: 'GET',
+            },
+        );
+        const responseJson = await response.json();
+        console.log(responseJson.length);
+        return responseJson;
+    } catch (error) {
+        console.error("UseInsulinData: ", error);
+        throw error;
+    }
+};
+
 export function CurrentTime() {
   const gmtDate = new Date();
   const date = gmtDate.toLocaleString('en-GB', {timeZone: 'Etc/GMT'});
@@ -41,11 +58,7 @@ export function CurrentTime() {
   let hour = date.split(',')[1].split(' ')[1].split(':')[0];
   let minute = date.split(',')[1].split(' ')[1].split(':')[1];
   let second = date.split(',')[1].split(' ')[1].split(':')[2];
-  //if (day < 10) { day = '0' + day }
-  //if (month < 10) { month = '0' + month }
-  //if (hour < 10) { hour = '0' + hour }
-  //if (minute < 10) { minute = '0' + minute }
-  //if (second < 10) { second = '0' + second }
+ 
 
   const formattedDate = `${year}-${month}-${day}:${hour}:${minute}:${second}`;
 
