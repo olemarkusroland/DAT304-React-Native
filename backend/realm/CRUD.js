@@ -141,10 +141,6 @@ export async function readLatestInsulin(realm) {
 }
 
 export async function updateInsulin(realm) {
-    const allObjects = realm.objects('InsulinInfo');
-    realm.write(() => {
-        realm.delete(allObjects);
-    });
   if (!realm) {
     console.error('updateInsulin: Realm instance is null');
     return;
