@@ -8,14 +8,16 @@ const InformationChart = ({glucoseData}) => {
     return <Text>No health data available</Text>;
   }
   const [data, setData] = useState({
-    labels: ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30'],
+    labels: ['13:00',],
     datasets: [
       {
-        data: [0, 0, 0, 0, 0, 0],
+        data: [0,],
         color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
         strokeWidth: 2
       }
-    ]
+      
+    ],
+    legend: ["Loading.."] 
   });
 
 
@@ -24,11 +26,17 @@ const InformationChart = ({glucoseData}) => {
       glucose: parseInt(data.glucose),
       timestamp: data.timestamp
     };
+  }).reverse();
+
+  const sortedGlucoseValues = lastTenGlucoseValues.sort((a, b) => {
+    const timeA = moment(a.timestamp);
+    const timeB = moment(b.timestamp);
+    return timeA.diff(timeB, 'milliseconds');
   });
 
-  const formattedTimestamps = lastTenGlucoseValues.map(data => {
+  const formattedTimestamps = sortedGlucoseValues.map(data => {
     const date = new Date(data.timestamp);
-    const hours = date.getHours();
+    const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
     const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
     return `${hours}:${minutes}`;
   });
@@ -37,11 +45,11 @@ const InformationChart = ({glucoseData}) => {
     // Replace the placeholder data with actual data
     const newData = {
       // ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30']
-      // formattedTimestamps
+
       labels: formattedTimestamps,
       datasets: [
         {
-          data: lastTenGlucoseValues.map(data => data.glucose),
+          data: sortedGlucoseValues.map(data => data.glucose),
           color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
           strokeWidth: 2
         }
@@ -60,10 +68,12 @@ const InformationChart = ({glucoseData}) => {
     return () => clearInterval(interval);
   }, []);
   
-  //console.log(lastTenGlucoseValues);
+  //console.log("Last 10:", lastTenGlucoseValues);
   //console.log(glucoseData[0]);
   //console.log(glucoseData[0].glucose)
   //console.log(glucoseData[0].timestamp);
+  //console.log("Sorted: ", sortedGlucoseValues)
+
   console.log("Interval completed");
 
   return (
