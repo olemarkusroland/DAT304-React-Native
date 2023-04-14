@@ -19,7 +19,7 @@ export const HealthContextProvider = ({children}) => {
       // Set up a listener for changes in the glucose and insulin collections
       const glucoseListener = (newGlucose, changes) => {
         const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
         const glucoseEntriesLast7Days = newGlucose.filter(
           entry => new Date(entry.timestamp) >= oneWeekAgo,
@@ -29,7 +29,7 @@ export const HealthContextProvider = ({children}) => {
 
       const insulinListener = (newInsulin, changes) => {
         const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
         const insulinEntriesLast7Days = newInsulin.filter(
           entry => new Date(entry.timestamp) >= oneWeekAgo,

@@ -50,7 +50,7 @@ export const HealthService = {
   getGlucoseData2: async realm => {
     try {
       const fromDate = new Date();
-      fromDate.setDate(fromDate.getDate() - 1); // 7 days ago
+      fromDate.setDate(fromDate.getDate() - 7); // 7 days ago
       const toDate = new Date(); // today
 
       let glucoseData = await readGlucoses(realm, fromDate, toDate);
