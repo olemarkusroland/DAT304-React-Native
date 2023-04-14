@@ -9,19 +9,16 @@ import {
 } from 'react-native';
 import {HealthContext} from '../../../services/Health/Health-Context';
 
-export const HomeScreen = ({navigation}) => {
+export const HomeScreen = ({ navigation }) => {
     const { glucose, insulin } = useContext(HealthContext);
     try {
         if (glucose.length > 0) {
-            const lastGlucoseValue = glucose[glucose.length - 1].glucose;
-            const lastTimeValue = glucose[glucose.length - 1].timestamp.toLocaleString();
-
-
             return (
                 <View style={styles.container}>
-                        <Text style={styles.GlucoseValue}>{lastGlucoseValue}mg/dl</Text>
-                        <Text style={styles.TimeValue}>{lastTimeValue}</Text>
+                    <Text style={styles.GlucoseValue}>{glucose[0].glucose}mg/dl</Text>
+                    <Text style={styles.TimeValue}>{glucose[0].timestamp.toLocaleString()}</Text>
                 </View>
+
             );
         }
         else {
@@ -32,7 +29,7 @@ export const HomeScreen = ({navigation}) => {
             );
         }
     } catch (error) {
-        
+        console.log("   : ", error)
     }
 };
 

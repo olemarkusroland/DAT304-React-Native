@@ -2,14 +2,7 @@ import { useState, useEffect } from 'react';
 import BackgroundFetch from 'react-native-background-fetch';
 import { updateGlucose, updateInsulin } from './realm/CRUD.js';
 
-export const useIsLoading = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    return [isLoading, setIsLoading];
-};
-
 export const useBackgroundFetch = (realm, isAuthenticated) => {
-    const [isLoading, setIsLoading] = useIsLoading();
-
     useEffect(() => {
         if (realm && isAuthenticated) {
             const initBackgroundFetch = async () => {
@@ -18,12 +11,8 @@ export const useBackgroundFetch = (realm, isAuthenticated) => {
                     async (taskId) => {
                         console.log('[BackgroundFetch] taskId:', taskId);
 
-                        setIsLoading(true);
-
                         await updateGlucose(realm);
                         await updateInsulin(realm);
-
-                        setIsLoading(false);
 
                         BackgroundFetch.finish(taskId);
                     },
@@ -45,9 +34,9 @@ export const useBackgroundFetch = (realm, isAuthenticated) => {
         if (isAuthenticated) {
             const scheduleTestTask = async () => {
                 await BackgroundFetch.scheduleTask({
-                    taskId: 'test-background-fetch',
+                    taskId: 'Initial-background-fetch',
                     forceAlarmManager: true,
-                    delay: 4000,
+                    delay: 3000,
                 });
             };
 
