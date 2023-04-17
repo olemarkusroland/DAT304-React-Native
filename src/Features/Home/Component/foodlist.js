@@ -18,6 +18,15 @@ export const renderFoodItem = ({item}) => {
   );
 };
 
+export const renderFoodEntry = ({ item }) => {
+    return (
+        <View style={food_styles.foodItem}>
+            <Text style={food_styles.foodName}>{item.food.name}</Text>
+            <Text style={food_styles.foodName}>{Number(item.food.carbohydrates * item.amount / 1000).toFixed(0)} carbs</Text>
+        </View>
+    );
+};
+
 export const food_styles = StyleSheet.create({
   container: {
     flex: 1,

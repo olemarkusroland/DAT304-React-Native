@@ -29,7 +29,7 @@ export const HomeScreen = ({ navigation }) => {
             );
         }
     } catch (error) {
-        console.log("   : ", error)
+        console.log("Home screen: ", error)
     }
 };
 

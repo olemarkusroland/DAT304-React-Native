@@ -7,7 +7,7 @@ import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import connectivity from '../connectivity';
 
 import {HomeNavigator} from './home-navigation';
-import {InformationNavigator} from './glucose-nav';
+import {InformationNavigator} from './information-nav';
 
 export const Tab = createBottomTabNavigator();
 

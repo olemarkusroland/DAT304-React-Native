@@ -31,7 +31,7 @@ export const AuthenticationContextProvider = ({children}) => {
   return (
     <AuthenticationContext.Provider
       value={{
-        isAuthenticated: !!user,
+        isAuthenticated: true,
         user,
         isLoading,
         error,

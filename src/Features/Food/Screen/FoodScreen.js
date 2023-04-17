@@ -4,15 +4,18 @@ import {
     FlatList,
     TouchableOpacity,
     View,
+    Text,
 } from 'react-native';
 import { FoodInfo } from '../Component/FoodInfo';
 import { FoodContext } from '../../../services/Foods/Food-Context';
 import { Search } from '../Component/Search';
 import { EditSelection } from '../Component/EditSelection';
 import SelectedFoodsHeader from '../Component/SelectedFoodHeader';
+import { styles } from '../../../Styles';
 
 export const FoodScreen = ({ navigation }) => {
-    const { foods, selectedFoods, RemoveFood } = useContext(FoodContext);
+    const { foods, selectedFoods, RemoveFood, CreateMeal } = useContext(FoodContext);
+
     const [pickedFood, setPickedFood] = useState([]);
     const [showIconButtons, setShowIconButtons] = useState(false);
     const [foodsToRemove, setFoodsToRemove] = useState([]);
@@ -90,13 +93,13 @@ export const FoodScreen = ({ navigation }) => {
                 onPress={handleEdit}
                 setSelectedItems={handleSelected}
                 ShowIconButtons={showIconButtons}
-                updateFoodsToRemove={updateFoodsToRemove} // Add this prop
+                updateFoodsToRemove={updateFoodsToRemove}
             />
         );
     };
 
     return (
-        <View>
+        <View style={{ flex: 1 }}>
             <FlatList
                 data={foods}
                 renderItem={renderFood}
@@ -115,6 +118,9 @@ export const FoodScreen = ({ navigation }) => {
                     />
                 }
             />
+            <TouchableOpacity style={styles.button} onPress={CreateMeal}>
+                <Text style={styles.buttonText}>Create Meal</Text>
+            </TouchableOpacity>
         </View>
     );
 };

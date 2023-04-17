@@ -1,34 +1,34 @@
 export const UseGlucoseData = async (from, to) => {
-  try {
-    //console.log(from + " ___ " + to + "---->" + `https://oskarnightscoutweb1.azurewebsites.net/api/v1/entries/sgv.json?find[dateString][$gte]=${from}&find[dateString][$lte]=${to}&count=all`);
-    const response = await fetch(
-      `https://oskarnightscoutweb1.azurewebsites.net/api/v1/entries/sgv.json?find[dateString][$gte]=${from}&find[dateString][$lte]=${to}&count=all`,
-      {
-        method: 'GET',
-      },
-    );
-    const responseJson = await response.json();
-    return responseJson;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+    try {
+        //console.log(from + " ___ " + to + "---->" + `https://oskarnightscoutweb1.azurewebsites.net/api/v1/entries/sgv.json?find[dateString][$gte]=${from}&find[dateString][$lte]=${to}&count=all`);
+        const response = await fetch(
+            `https://oskarnightscoutweb1.azurewebsites.net/api/v1/entries/sgv.json?find[dateString][$gte]=${from}&find[dateString][$lte]=${to}&count=all`,
+            {
+                method: 'GET',
+            },
+        );
+        const responseJson = await response.json();
+        return responseJson;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
 };
 
 export const UseInsulinData = async (from, to) => {
-  try {
-    const response = await fetch(
-      `https://oskarnightscoutweb1.azurewebsites.net/api/v1/treatments.json?find[created_at][$gte]=${from}&find[created_at][$lte]=${to}&count=all`,
-      {
-        method: 'GET',
-      },
-    );
-    const responseJson = await response.json();
-    return responseJson;
-  } catch (error) {
-    console.error("UseInsulinData: ", error);
-    throw error;
-  }
+    try {
+        const response = await fetch(
+            `https://oskarnightscoutweb1.azurewebsites.net/api/v1/treatments.json?find[created_at][$gte]=${from}&find[created_at][$lte]=${to}&count=all`,
+            {
+                method: 'GET',
+            },
+        );
+        const responseJson = await response.json();
+        return responseJson;
+    } catch (error) {
+        console.error("UseInsulinData: ", error);
+        throw error;
+    }
 };
 
 
@@ -41,7 +41,7 @@ export const UseInsulinBasalData = async () => {
             },
         );
         const responseJson = await response.json();
-        console.log(responseJson.length);
+        //console.log("UseInsulinBasalData: ", responseJson.length);
         return responseJson;
     } catch (error) {
         console.error("UseInsulinData: ", error);
@@ -50,33 +50,33 @@ export const UseInsulinBasalData = async () => {
 };
 
 export function CurrentTime() {
-  const gmtDate = new Date();
-  const date = gmtDate.toLocaleString('en-GB', {timeZone: 'Etc/GMT'});
-  let year = date.split(',')[0].split('/')[2];
-  let month = date.split(',')[0].split('/')[1].split(' ');
-  let day = date.split(',')[0].split('/')[0];
-  let hour = date.split(',')[1].split(' ')[1].split(':')[0];
-  let minute = date.split(',')[1].split(' ')[1].split(':')[1];
-  let second = date.split(',')[1].split(' ')[1].split(':')[2];
- 
+    const gmtDate = new Date();
+    const date = gmtDate.toLocaleString('en-GB', { timeZone: 'Etc/GMT' });
+    let year = date.split(',')[0].split('/')[2];
+    let month = date.split(',')[0].split('/')[1].split(' ');
+    let day = date.split(',')[0].split('/')[0];
+    let hour = date.split(',')[1].split(' ')[1].split(':')[0];
+    let minute = date.split(',')[1].split(' ')[1].split(':')[1];
+    let second = date.split(',')[1].split(' ')[1].split(':')[2];
 
-  const formattedDate = `${year}-${month}-${day}:${hour}:${minute}:${second}`;
 
-  return formattedDate;
+    const formattedDate = `${year}-${month}-${day}:${hour}:${minute}:${second}`;
+
+    return formattedDate;
 }
 
 export function LastMonthTime() {
-  const date = new Date();
-  const year = date.getFullYear();
-  date.setMonth(date.getMonth() - 1);
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // add leading zero if month < 10
-  const day = String(date.getDate()).padStart(2, '0'); // add leading zero if day < 10
-  const hours = String(date.getHours()).padStart(2, '0'); // add leading zero if hours < 10
-  const minutes = String(date.getMinutes()).padStart(2, '0'); // add leading zero if minutes < 10
-  const seconds = String(date.getSeconds()).padStart(2, '0'); // add leading zero if seconds < 10
-  const formattedDate = `${year}-${month}-${day}:${hours}:${minutes}:${seconds}`;
+    const date = new Date();
+    const year = date.getFullYear();
+    date.setMonth(date.getMonth() - 1);
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // add leading zero if month < 10
+    const day = String(date.getDate()).padStart(2, '0'); // add leading zero if day < 10
+    const hours = String(date.getHours()).padStart(2, '0'); // add leading zero if hours < 10
+    const minutes = String(date.getMinutes()).padStart(2, '0'); // add leading zero if minutes < 10
+    const seconds = String(date.getSeconds()).padStart(2, '0'); // add leading zero if seconds < 10
+    const formattedDate = `${year}-${month}-${day}:${hours}:${minutes}:${seconds}`;
 
-  return formattedDate;
+    return formattedDate;
 }
 //export const CurrentTime = () => {
 //    const [currentTime, setCurrentTime] = useState(new Date());

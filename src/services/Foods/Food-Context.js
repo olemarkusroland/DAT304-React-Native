@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
-import { GetFoodAsync } from './Food-Service';
 import debounce from 'lodash.debounce';
+import { getFoods, addFoodEntry, addMeal, addExampleFoods, getFoodEntries } from './Food-Service';
 
 export const FoodContext = createContext();
 
@@ -9,6 +9,21 @@ export const FoodContextProvider = ({ children }) => {
     const [filteredFoods, setFilteredFoods] = useState([]);
     const [searchKeyword, setSearchKeyword] = useState('');
     const [selectedFoods, setSelectedFoods] = useState([]);
+
+    const createMealFromSelectedFoods = async () => {
+        try {
+            const foodEntryIds = [];
+            for (const food of selectedFoods) {
+                const foodEntryID = await addFoodEntry(food.name, food.grams);
+                foodEntryIds.push(foodEntryID);
+            }
+            await addMeal(foodEntryIds);
+            setSelectedFoods([]);
+            console.log('A new meal has been created from the selected foods');
+        } catch (error) {
+            console.error('Error creating meal from selected foods:', error);
+        }
+    };
 
     const addDistinctFood = food => {
         setSelectedFoods(prevSelectedFoods => {
@@ -38,10 +53,11 @@ export const FoodContextProvider = ({ children }) => {
     useEffect(() => {
         const fetchFoods = async () => {
             try {
-                const mockFoods = await GetFoodAsync();
-                setFoods(mockFoods);
-                setFilteredFoods(mockFoods);
-                console.log('Foods fetched successfully', mockFoods);
+                await addExampleFoods();
+                const foods = await getFoods();
+                setFoods(foods);
+                setFilteredFoods(foods);
+                console.log('Foods fetched successfully', foods);
             } catch (error) {
                 console.error('Error fetching foods:', error);
             }
@@ -78,8 +94,11 @@ export const FoodContextProvider = ({ children }) => {
                 selectedFoods,
                 AddFood: addDistinctFood,
                 RemoveFood: removeSelectedFood,
+                CreateMeal: createMealFromSelectedFoods,
+                getFoodEntries
             }}>
             {children}
         </FoodContext.Provider>
+
     );
 };

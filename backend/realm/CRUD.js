@@ -1,5 +1,4 @@
 import {UseGlucoseData, UseInsulinBasalData, UseInsulinData} from '../nightscoutAPI';
-import {realmOpen} from './utils';
 
 function autoIncrementId(realm, modelName) {
     const lastObject = realm.objects(modelName).sorted('_id', true)[0];
@@ -410,13 +409,17 @@ export async function createFoodEntry(realm, foodName, amount) {
         throw new Error('Food not found');
     }
 
+    const id = autoIncrementId(realm, 'FoodEntry');
+
     await realm.write(() => {
         realm.create('FoodEntry', {
-            _id: autoIncrementId(realm, 'FoodEntry'),
+            _id: id,
             food,
             amount,
         });
     });
+
+    return id;
 }
 
 export async function deleteFoodEntry(realm, foodEntryId) {
@@ -600,4 +603,10 @@ export async function deleteUser(realm, userId) {
         console.log('Error deleting User:', error);
         return false;
     }
+}
+
+export async function exampleFoods(realm) {
+    createOrUpdateFood(realm, "Example food 1", 1000, 100, 10, 1);
+    createOrUpdateFood(realm, "Example food 2", 2000, 200, 20, 2);
+    createOrUpdateFood(realm, "Example food 3", 3000, 300, 30, 3);
 }
