@@ -1,12 +1,12 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {View, Text, Dimensions, Button} from 'react-native';
 import moment from 'moment';
 import {LineChart} from 'react-native-chart-kit';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 
-const InformationChart = ({glucoseData}) => {
-  if (!glucoseData) {
+const InformationChart = ({glucoseData, insulinData}) => {
+  if (!glucoseData || !insulinData) {
     return <Text>No health data available</Text>;
   }
   const [data, setData] = useState({
@@ -24,47 +24,113 @@ const InformationChart = ({glucoseData}) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   
-  // Groups the data into dates
-  const groupedData = glucoseData.reduce((acc, curr) => {
-    const date = moment(curr.timestamp).format('YYYY-MM-DD');
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push({
-      glucose: parseInt(curr.glucose),
-      timestamp: curr.timestamp,
-    });
-    return acc;
-  }, {});
+  // Groups insulin data into dates, uses memo to only render once
+  const groupedGlucoseData = useMemo(() => {
+    return glucoseData.reduce((acc, curr) => {
+      const date = moment(curr.timestamp).format('YYYY-MM-DD');
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push({
+        glucose: parseInt(curr.glucose),
+        timestamp: curr.timestamp,
+      });
+      return acc;
+    }, {});
+  }, [glucoseData]);
+  
+  // Groups insulin data into dates, uses memo to only render once
+  const groupedInsulinData = useMemo(() => {
+    return insulinData.reduce((acc, curr) => {
+      const date = moment(curr.timestamp).format('YYYY-MM-DD');
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push({
+        insulin: parseInt(curr.insulin),
+        timestamp: curr.timestamp,
+      });
+      return acc;
+    }, {});
+  }, [insulinData]);
 
-  const selectedDateData = groupedData[moment(selectedDate).format('YYYY-MM-DD')] || [];
+  // Get the data from the grouped data from a date using datetimepicker
+  const selectedDateGlucoseData = groupedGlucoseData[moment(selectedDate).format('YYYY-MM-DD')] || [];
+  const selectedDateInsulinData = groupedInsulinData[moment(selectedDate).format('YYYY-MM-DD')] || [];
 
-  const sortedGlucoseValues = selectedDateData.sort((a, b) => {
+  const groupedDateData =  selectedDateGlucoseData.concat(selectedDateInsulinData);
+  const sortedGroupedValues = groupedDateData.sort((a, b) => {
     const timeA = moment(a.timestamp);
     const timeB = moment(b.timestamp);
     return timeA.diff(timeB, 'milliseconds');
   });
 
-  const sortedUpdatedLabels = sortedGlucoseValues.map((item) => moment(item.timestamp).format('HH:mm'));
-  const sortedUpdatedData = sortedGlucoseValues.map((item) => (item.glucose));
+  //console.log('sorted grouped values: ', sortedGroupedValues);
+
+  // Split the values into two arrays, one for the values and one for the timestamps.
+
+  const sortedGroupedUpdatedData = sortedGroupedValues.map((item) => ({
+    timestamp: moment(item.timestamp).format('HH:mm'),
+    glucose: item.glucose ?? null,
+    insulin: item.insulin ?? null,
+  }));
+
+  // Find an insulin value, check the closest timestamp for glucose value (before and after)
+  // Interpolate the two glucose values and set the insulin value equal to the interpolated
+  // value. This is to find an estimated value when the user inserted insulin.
+  function setInsulinValues(sortedGroupedUpdatedData) {
+    for (let i = 0; i < sortedGroupedUpdatedData.length; i++) {
+      const currentData = sortedGroupedUpdatedData[i];
+      const currentInsulin = currentData.insulin;
   
-  //console.log('raw data: ', glucoseData);
-  //console.log('sorted data: ', sortedGlucoseValues);
-  //console.log('sorted labels: ',sortedUpdatedLabels);
-  //console.log('sorted values: ',sortedUpdatedData);
-
-
-
-  // GET THIS TO UPDATE WHENEVER SORTEDUPDATEDLABELS CHANGE !!!!!!!!!!!
-
-  // check in the return (formatxlabel)
-
+      if (currentInsulin !== null) {
+        let closestGlucoseBefore = null;
+        let closestGlucoseAfter = null;
+        let closestGlucoseBeforeTimestamp = null;
+        let closestGlucoseAfterTimestamp = null;
   
-  const formatXLabel = (sortedUpdatedLabels) => {
+        for (let j = 0; j < sortedGroupedUpdatedData.length; j++) {
+          if (i !== j && sortedGroupedUpdatedData[j].glucose !== null) {
+            const glucoseTimestamp = moment(sortedGroupedUpdatedData[j].timestamp, 'HH:mm');
+            const currentTimestamp = moment(currentData.timestamp, 'HH:mm');
+  
+            if (glucoseTimestamp.isBefore(currentTimestamp)) {
+              if (closestGlucoseBefore === null || currentTimestamp.diff(glucoseTimestamp) < currentTimestamp.diff(moment(closestGlucoseBeforeTimestamp, 'HH:mm'))) {
+                closestGlucoseBefore = sortedGroupedUpdatedData[j].glucose;
+                closestGlucoseBeforeTimestamp = sortedGroupedUpdatedData[j].timestamp;
+              }
+            } else if (glucoseTimestamp.isAfter(currentTimestamp)) {
+              if (closestGlucoseAfter === null || glucoseTimestamp.diff(currentTimestamp) < moment(closestGlucoseAfterTimestamp, 'HH:mm').diff(currentTimestamp)) {
+                closestGlucoseAfter = sortedGroupedUpdatedData[j].glucose;
+                closestGlucoseAfterTimestamp = sortedGroupedUpdatedData[j].timestamp;
+              }
+            }
+          }
+        }
+  
+        if (closestGlucoseBefore !== null && closestGlucoseAfter !== null) {
+          const interpolatedGlucose = closestGlucoseBefore + ((closestGlucoseAfter - closestGlucoseBefore) / moment(closestGlucoseAfterTimestamp, 'HH:mm').diff(moment(closestGlucoseBeforeTimestamp, 'HH:mm'))) * moment(currentData.timestamp, 'HH:mm').diff(moment(closestGlucoseBeforeTimestamp, 'HH:mm'));
+          currentData.insulin = interpolatedGlucose;
+        }
+      }
+    }
+  
+    return sortedGroupedUpdatedData;
+  }
+  
+  
+  setInsulinValues(sortedGroupedUpdatedData);
 
-    const time = moment(sortedUpdatedLabels, 'HH:mm');
-    //console.log('time: ',time);
-    //console.log('sorted time:', sortedUpdatedLabels);
+  const glucoseValues = sortedGroupedUpdatedData.map((item) => item.glucose ?? null);
+  const insulinValues = sortedGroupedUpdatedData.map((item) => item.insulin ?? null);
+  const timestamps = sortedGroupedUpdatedData.map((item) => item.timestamp);  
+
+
+  //console.log(sortedGroupedUpdatedData);
+
+  const formatXLabel = (timestamps) => {
+
+    const time = moment(timestamps, 'HH:mm');
     if (time.minute() === 0){
       //console.log('returned time: ', time.format('MMM Do YY, HH:mm'))
       return time.format('HH:mm');
@@ -77,16 +143,22 @@ const InformationChart = ({glucoseData}) => {
 
   const updateData = () => {
     // Replace the placeholder data with actual data
+    
     const newData = {
-      // ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30']
-            //sortedUpdatedLabels, updatedLabels
-      labels: sortedUpdatedLabels,
+      labels: timestamps,
       datasets: [
         {
-                //sortedUpdatedData, updatedData
-          data: sortedUpdatedData,
+          data: glucoseValues,
+          color: (opacity = 1) => `rgba(119, 207, 153, ${opacity})`,
+          strokeWidth: 2,
         },
-      ]
+        {
+          data: insulinValues,
+          color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
+          strokeWidth: 0.1,
+        }
+      ],
+      legend: ["Glucose", "Insulin"]
     };
     setData(newData);
     };
@@ -95,39 +167,43 @@ const InformationChart = ({glucoseData}) => {
   useEffect(() => {
     updateData();
   }, [selectedDate]);
+
+
+  
+  const chartConfig = {
+    xAxisLabelRotation: 90,
+    backgroundColor: '#DCDCDD',
+    backgroundGradientFrom: '#28666E',
+    backgroundGradientTo: '#4BB1BE',
+    decimalPlaces: 0, // optional, defaults to 2dp
+    color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    propsForDots: {
+      r: "3",
+      strokeWidth: "0.5",
+      stroke: "#fff"
+    }
+    
+  };
+  
   
   return (
-    <View style={{flex: 1}}>
+    <View style={{}}>
        <LineChart
         data={data}
-        width={Dimensions.get('window').width}
+        width={392}
         height={500}
-        yAxisSuffix=""
+        yAxisSuffix="u"
         yAxisInterval={2}
         xAxisInterval={1}
         formatXLabel={formatXLabel}
-        chartConfig={{
-          xAxisLabelRotation: 90,
-          backgroundColor: '#ffffff',
-          backgroundGradientFrom: '#ffffff',
-          backgroundGradientTo: '#ffffff',
-          decimalPlaces: 0, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          propsForDots: {
-            r: '2',
-            strokeWidth: '1',
-            stroke: '#ffa726'
-          },
-        }}
+        chartConfig={chartConfig}
         verticalLabelRotation={90}
         fromZero={true}
-        bezier
         style={{
-          marginVertical: 15,
-          marginLeft: -15,
-          marginRight: 15,
-          borderRadius: 16,
+          borderRadius: 4,
+          paddingRight: 45,
+          marginLeft: 45,
         }}
       />
        <Button title="Select Date" onPress={() => setShowDatePicker(true)} />
@@ -136,7 +212,7 @@ const InformationChart = ({glucoseData}) => {
             value={selectedDate}
             mode="date"
             display="default"
-            onChange={(event, date) => {
+            onChange={(date) => {
               setShowDatePicker(false);
               setSelectedDate(date);
             }}

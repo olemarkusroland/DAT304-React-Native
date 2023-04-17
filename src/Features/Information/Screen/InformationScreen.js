@@ -44,7 +44,7 @@ const InformationScreen = ({navigation}) => {
     if (glucose.length > 0) {
         return (
             <View style={styles.container}>
-              <InformationChart glucoseData={glucose}></InformationChart>
+              <InformationChart glucoseData={glucose} insulinData={insulin}></InformationChart>
             </View>
         );
     }

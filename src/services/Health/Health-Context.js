@@ -68,6 +68,8 @@ export const HealthContextProvider = ({children}) => {
       setLastTimeValue(null);
     }
   }, [glucose]);
+
+  
   return (
     <HealthContext.Provider
       value={{
