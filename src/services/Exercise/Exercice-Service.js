@@ -8,7 +8,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Text, View } from 'react-native';
 import { AuthenticationContext } from '../Auth/Auth-Context';
 import PushNotification from 'react-native-push-notification';
-import { deleteExerciseByTimestamp, createExericise, deleteAllExercises } from '../../../backend/realm/CRUD.js'
+import { deleteExerciseByTimestamp, createExericise, deleteAllExercises, readAllExercises } from '../../../backend/realm/CRUD.js'
 
 const now = Math.floor(Date.now() / 1000); 
 const twentyFourHoursAgo = Math.floor((Date.now() - 24 * 60 * 60 * 1000) / 1000); 
@@ -21,7 +21,7 @@ export async function googleFitUpdateSteps(accessToken, realm) {
   
    
     await deleteExerciseByTimestamp(realm, dayAgoUTC)
-      
+    var check = await readAllExercises(realm);  
     fetchStepCount(accessToken, twentyFourHoursAgo * 1000, now * 1000).then(async (data) => {      
        
         

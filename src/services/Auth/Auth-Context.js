@@ -8,11 +8,15 @@ export const AuthenticationContextProvider = ({children}) => {
   const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
     const [accessToken, setaccessToken] = useState(null);
-
+    const [refreshToken, setrefreshToken] = useState(null);
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      const accessToken = await GoogleAuthService.login();
+        const Token = await GoogleAuthService.login();
+        const accessToken = await Token.accessToken;
+        console.log(accessToken);
+        const refreshToken = await Token.refreshToken;
+        console.log(refreshToken);
       const userData = await fetch(
         'https://www.googleapis.com/userinfo/v2/me',
         {
@@ -22,6 +26,7 @@ export const AuthenticationContextProvider = ({children}) => {
       console.log('Google user data', userData);
         setUser(userData);
         setaccessToken(accessToken);
+        setrefreshToken(refreshToken);
     } catch (e) {
       setError(e);
     } finally {
@@ -37,6 +42,8 @@ export const AuthenticationContextProvider = ({children}) => {
         error,
         handleLogin,
         accessToken,
+        refreshToken,
+        setaccessToken,
       }}>
       {children}
     </AuthenticationContext.Provider>
