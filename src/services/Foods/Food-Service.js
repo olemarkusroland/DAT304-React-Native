@@ -1,5 +1,5 @@
 import { realmOpen } from '../../../backend/realm/utils';
-import { createOrUpdateFood, readFoods, createFoodEntry, createMeal, exampleFoods, readFoodEntries } from '../../../backend/realm/CRUD';
+import { createOrUpdateFood, readFoods, createFoodEntry, createMeal, exampleFoods, readFoodEntries, readMeals } from '../../../backend/realm/CRUD';
 
 export const GetFoodAsyncMock = async () => {
     const mockFoods = [
@@ -113,6 +113,12 @@ export const addFoodEntry = async (foodName, grams) => {
     const realm = await realmOpen();
 
     return await createFoodEntry(realm, foodName, grams)
+};
+
+export const getMeals = async () => {
+    const realm = await realmOpen();
+
+    return await readMeals(realm);
 };
 
 export const addMeal = async (foodEntryIds) => {

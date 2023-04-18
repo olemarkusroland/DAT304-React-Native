@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import debounce from 'lodash.debounce';
-import { getFoods, addFoodEntry, addMeal, addExampleFoods, getFoodEntries } from './Food-Service';
+import { getFoods, addFoodEntry, addMeal, addExampleFoods, getFoodEntries, getMeals } from './Food-Service';
 
 export const FoodContext = createContext();
 
@@ -17,6 +17,7 @@ export const FoodContextProvider = ({ children }) => {
                 const foodEntryID = await addFoodEntry(food.name, food.grams);
                 foodEntryIds.push(foodEntryID);
             }
+
             await addMeal(foodEntryIds);
             setSelectedFoods([]);
             console.log('A new meal has been created from the selected foods');
@@ -95,7 +96,8 @@ export const FoodContextProvider = ({ children }) => {
                 AddFood: addDistinctFood,
                 RemoveFood: removeSelectedFood,
                 CreateMeal: createMealFromSelectedFoods,
-                getFoodEntries
+                getFoodEntries,
+                getMeals,
             }}>
             {children}
         </FoodContext.Provider>

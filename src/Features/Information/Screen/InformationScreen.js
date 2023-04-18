@@ -15,15 +15,15 @@ import { HealthContext } from '../../../services/Health/Health-Context';
 import { FoodContext } from '../../../services/Foods/Food-Context';
 
 const InformationScreen = ({ navigation }) => {
-    const { getFoodEntries } = useContext(FoodContext);
+    const { getMeals } = useContext(FoodContext);
 
-    const [recentFoodEntries, setRecentFoodEntries] = useState([]);
+    const [meals, setMeals] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
-            const entries = await getFoodEntries();
-            setRecentFoodEntries(entries);
-            console.log("Food Entries: ", entries)
+            const meals = await getMeals();
+            setMeals(meals);
+            console.log("Meals: ", meals)
         };
         fetchData();
     }, []);
@@ -45,11 +45,11 @@ const InformationScreen = ({ navigation }) => {
                         flex: 1,
                         backgroundColor: '#ddd',
                     }}
-                    onPress={() => navigation.navigate('RecentFood', { item: recentFoodEntries })}>
+                    onPress={() => navigation.navigate('RecentFood', { item: meals })}>
                                 
                     <Text style={food_styles.titleText}>Recently Eaten Food</Text>
                     <FlatList
-                        data={recentFoodEntries}
+                        data={meals}
                         renderItem={renderFoodEntry}
                         keyExtractor={item => item._id}
                     />

@@ -456,6 +456,8 @@ export async function readMeals(realm) {
         entries: Array.from(meal.entries),
     }));
 
+    console.log("Meals: ", mealsArray);
+    console.log("Meals 1 entries: ", mealsArray[0].entries);
     return mealsArray;
 }
 
@@ -483,28 +485,37 @@ export async function createMeal(realm, foodEntryIds) {
     try {
         const foodEntries = [];
 
+        console.log('FoodEntryIds:', foodEntryIds);
+
         for (const id of foodEntryIds) {
             const foodEntry = await realm.objectForPrimaryKey('FoodEntry', id);
             if (foodEntry) {
+                console.log(`FoodEntry found for id ${id}:`, foodEntry);
                 foodEntries.push(foodEntry);
             } else {
                 console.log(`FoodEntry with id ${id} not found`);
             }
         }
 
+        console.log('FoodEntries:', foodEntries);
+
+        let newMeal;
+
         await realm.write(() => {
-            const newMeal = realm.create('Meal', {
+            newMeal = realm.create('Meal', {
                 _id: autoIncrementId(realm, 'Meal'),
                 timestamp: new Date().toISOString(),
-                entries: foodEntries,
+                entries: [...foodEntries],
             });
-
-            console.log('New meal created:', newMeal);
         });
 
+        // Get the created Meal object from the Realm
+        const createdMeal = realm.objectForPrimaryKey('Meal', newMeal._id);
+
+        console.log('New items created:', Array.from(createdMeal.entries));
         console.log('Meal created with the specified food entries.');
     } catch (error) {
-        console.log('Error creating meal:', error);
+        console.log('Error creating items:', error);
     }
 }
 

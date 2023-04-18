@@ -21,8 +21,8 @@ export const renderFoodItem = ({item}) => {
 export const renderFoodEntry = ({ item }) => {
     return (
         <View style={food_styles.foodItem}>
-            <Text style={food_styles.foodName}>{item.food.name}</Text>
-            <Text style={food_styles.foodName}>{Number(item.food.carbohydrates * item.amount / 1000).toFixed(0)} carbs</Text>
+            <Text style={food_styles.foodName}>{item.entries[0].name}</Text>
+            <Text style={food_styles.foodName}>{Number(item.entries[0].carbohydrates * item.entries[0].amount / 1000).toFixed(0)} carbs</Text>
         </View>
     );
 };
