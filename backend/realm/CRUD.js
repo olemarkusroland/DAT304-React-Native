@@ -1,4 +1,5 @@
-import {UseGlucoseData, UseInsulinBasalData, UseInsulinData} from '../nightscoutAPI';
+import { UseGlucoseData, UseInsulinBasalData, UseInsulinData } from '../nightscoutAPI';
+import { realmOpen } from './utils';
 
 function autoIncrementId(realm, modelName) {
     const lastObject = realm.objects(modelName).sorted('_id', true)[0];
@@ -155,33 +156,33 @@ export async function updateInsulin(realm) {
     if (result.length !== 0) {
 
         console.log('Adding ' + result.length + ' insulin entries.');
-       
-            for (const insulinInfo of result) {
-              
-                if (insulinInfo.insulin != null && insulinInfo.created_at != null) {
 
-                    var basal = await getBasal(insulinInfo.created_at.toString());
-                   
-                    
-                    var parse_basal = parseFloat(basal);
+        for (const insulinInfo of result) {
 
-                    var parse_insulin = parseFloat(insulinInfo.insulin);
+            if (insulinInfo.insulin != null && insulinInfo.created_at != null) {
+
+                var basal = await getBasal(insulinInfo.created_at.toString());
 
 
-                    var insulin = parse_insulin + parse_basal;
+                var parse_basal = parseFloat(basal);
 
-                    var date = insulinInfo.created_at;
+                var parse_insulin = parseFloat(insulinInfo.insulin);
 
-                    await realm.write(async () => {
-                        realm.create('InsulinInfo', {
-                            insulin: insulin,
-                            timestamp: date,
-                        });
+
+                var insulin = parse_insulin + parse_basal;
+
+                var date = insulinInfo.created_at;
+
+                await realm.write(async () => {
+                    realm.create('InsulinInfo', {
+                        insulin: insulin,
+                        timestamp: date,
                     });
-                }
-                
+                });
             }
-      
+
+        }
+
 
         console.log('Database: Insulin updated');
     } else {
@@ -189,20 +190,20 @@ export async function updateInsulin(realm) {
         var date = currentDate.toISOString();
         var basal = await getBasal(date);
         var insulin = parseFloat(basal);
-        console.log('No insulin entries to add to database. but added Basal...')
+        
+        console.log('No insulin entries to add to database. but added Basal...' + insulin)
         await realm.write(() => {
             realm.create('InsulinInfo', {
                 insulin: insulin,
                 timestamp: date,
             });
         });
-          
+
     }
 }
 
-export async function getBasal(date_time)
-{
-   
+export async function getBasal(date_time) {
+
     const basal = await UseInsulinBasalData();
     var current_newest = null;
     var current_value = null;
@@ -227,62 +228,64 @@ export async function getBasal(date_time)
                     dateObject.getTime() + parseInt(timeStrings[j]) * 1000;
                     dateAddstrings.push(new Date(dateObject.getTime() + parseInt(timeStrings[j]) * 1000));
                     dateStrings.push(dateAddstrings[j].toISOString());
-                    
+
                 }
                 var current_value = null;
-             
+
                 for (let l = 0; l < dateAddstrings.length; l++) {
                     current_value = getNewestDate(date_time, dateAddstrings[l]);
                     if (current_value == date_time) {
-                         return basal[i].store["Pattern 1"].basal[l].value; }
-                        if (l == dateAddstrings.length - 1) {
-                             return basal[i].store["Pattern 1"].basal[l].value; }
+                        return basal[i].store["Pattern 1"].basal[l].value;
+                    }
+                    if (l == dateAddstrings.length - 1) {
+                        return basal[i].store["Pattern 1"].basal[l].value;
+                    }
                 }
-               
-                
+
+
             }
             else if (i == basal.length - 1) {
                 current_newest = getNewestDate(date_time, basal[i].created_at);
-                
-                    var dateStrings = [];
-                    var timeStrings = [];
-                    var dateAddstrings = [];
-                    if (basal[i].store["Pattern 1"].basal.length != 0) { dateStrings.push(basal[i].created_at); }
-                    for (let k = 0; k < basal[i].store["Pattern 1"].basal.length; k++) {
 
-                        timeStrings.push(basal[i].store["Pattern 1"].basal[k].timeAsSeconds)
-                    }
+                var dateStrings = [];
+                var timeStrings = [];
+                var dateAddstrings = [];
+                if (basal[i].store["Pattern 1"].basal.length != 0) { dateStrings.push(basal[i].created_at); }
+                for (let k = 0; k < basal[i].store["Pattern 1"].basal.length; k++) {
 
-                    for (let j = 0; j < basal[i].store["Pattern 1"].basal.length; j++) {
-                        var originalDate = dateStrings[j];
-                        var dateObject = new Date(originalDate);
-                        dateObject.getTime() + parseInt(timeStrings[j]) * 1000;
-                        dateAddstrings.push(new Date(dateObject.getTime() + parseInt(timeStrings[j]) * 1000));
-                        dateStrings.push(dateAddstrings[j].toISOString());
-                
-                    }
-                    var current_value = null;
-                    var current_value = null;
+                    timeStrings.push(basal[i].store["Pattern 1"].basal[k].timeAsSeconds)
+                }
 
-                    for (let l = 0; l < dateAddstrings.length; l++) {
-                        current_value = getNewestDate(date_time, dateAddstrings[l]);
-                        if (current_value == date_time) { return basal[i].store["Pattern 1"].basal[l].value; }
-                            if (l == dateAddstrings.length - 1) { return basal[i].store["Pattern 1"].basal[l].value; }
-                        
-                    }
-                   
-                
-            } 
-            
+                for (let j = 0; j < basal[i].store["Pattern 1"].basal.length; j++) {
+                    var originalDate = dateStrings[j];
+                    var dateObject = new Date(originalDate);
+                    dateObject.getTime() + parseInt(timeStrings[j]) * 1000;
+                    dateAddstrings.push(new Date(dateObject.getTime() + parseInt(timeStrings[j]) * 1000));
+                    dateStrings.push(dateAddstrings[j].toISOString());
+
+                }
+                var current_value = null;
+                var current_value = null;
+
+                for (let l = 0; l < dateAddstrings.length; l++) {
+                    current_value = getNewestDate(date_time, dateAddstrings[l]);
+                    if (current_value == date_time) { return basal[i].store["Pattern 1"].basal[l].value; }
+                    if (l == dateAddstrings.length - 1) { return basal[i].store["Pattern 1"].basal[l].value; }
+
+                }
+
+
+            }
+
         }
-    } 
+    }
     return 0;
-} 
+}
 
 export async function getNewestDate(first_date, second_date) {
     const firstDate = new Date(first_date);
     const secondDate = new Date(second_date);
-    
+
     if (firstDate.getTime() < secondDate.getTime()) {
         return second_date;
     } else {
@@ -409,17 +412,13 @@ export async function createFoodEntry(realm, foodName, amount) {
         throw new Error('Food not found');
     }
 
-    const id = autoIncrementId(realm, 'FoodEntry');
-
     await realm.write(() => {
         realm.create('FoodEntry', {
-            _id: id,
+            _id: autoIncrementId(realm, 'FoodEntry'),
             food,
             amount,
         });
     });
-
-    return id;
 }
 
 export async function deleteFoodEntry(realm, foodEntryId) {
@@ -605,8 +604,48 @@ export async function deleteUser(realm, userId) {
     }
 }
 
-export async function exampleFoods(realm) {
-    createOrUpdateFood(realm, "Example food 1", 1000, 100, 10, 1);
-    createOrUpdateFood(realm, "Example food 2", 2000, 200, 20, 2);
-    createOrUpdateFood(realm, "Example food 3", 3000, 300, 30, 3);
+
+export async function createExericise(realm, steps, start, end) {
+    try {
+        await realm.write(() => {
+            const newExerice = realm.create('ExercicesInfo', {
+                steps,
+                start,
+                end,
+            });
+        });
+
+       
+    } catch (error) {
+        console.log('Error creating Exercise:', error);
+    }
+}
+
+export async function deleteExerciseByTimestamp(realm, timestamp) {
+   
+    const entriesToDelete = realm.objects('ExercicesInfo').filtered('start > $0', timestamp);
+   
+    console.log("Deleted entires : " + entriesToDelete.length);
+
+
+    realm.write(() => {
+        realm.delete(entriesToDelete);
+    });
+
+    
+}
+
+export async function readAllExercises(realm) {
+    const allEntries = realm.objects('ExercicesInfo');
+   
+    console.log(allEntries);
+    return allEntries;
+}
+
+export async function deleteAllExercises(realm) {
+    const allEntries = realm.objects('ExercicesInfo');
+
+    realm.write(() => {
+        realm.delete(allEntries);
+    });
 }

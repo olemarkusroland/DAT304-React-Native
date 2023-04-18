@@ -41,7 +41,7 @@ export const UseInsulinBasalData = async () => {
             },
         );
         const responseJson = await response.json();
-        //console.log("UseInsulinBasalData: ", responseJson.length);
+        console.log(responseJson.length);
         return responseJson;
     } catch (error) {
         console.error("UseInsulinData: ", error);

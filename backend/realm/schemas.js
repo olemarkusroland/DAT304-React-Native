@@ -75,8 +75,9 @@ export class ExercicesInfo extends Realm.Object {
   static schema = {
     name: 'ExercicesInfo',
     properties: {
-      caloriesBurned: 'float',
-      timestamp: 'date',
+      steps: 'float',
+        start: 'date',
+        end: 'date',
     },
   };
 }
