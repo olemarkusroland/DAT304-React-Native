@@ -24,35 +24,29 @@ const InformationChart = ({glucoseData, insulinData}) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   
-  // Groups insulin data into dates, uses memo to only render once
-  const groupedGlucoseData = useMemo(() => {
-    return glucoseData.reduce((acc, curr) => {
-      const date = moment(curr.timestamp).format('YYYY-MM-DD');
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push({
-        glucose: parseInt(curr.glucose),
-        timestamp: curr.timestamp,
-      });
-      return acc;
-    }, {});
-  }, [glucoseData]);
+  const groupedGlucoseData = glucoseData.reduce((acc, curr) => {
+    const date = moment(curr.timestamp).format('YYYY-MM-DD');
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push({
+      glucose: parseInt(curr.glucose),
+      timestamp: curr.timestamp,
+    });
+    return acc;
+  }, {});
   
-  // Groups insulin data into dates, uses memo to only render once
-  const groupedInsulinData = useMemo(() => {
-    return insulinData.reduce((acc, curr) => {
-      const date = moment(curr.timestamp).format('YYYY-MM-DD');
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push({
-        insulin: parseInt(curr.insulin),
-        timestamp: curr.timestamp,
-      });
-      return acc;
-    }, {});
-  }, [insulinData]);
+  const groupedInsulinData = insulinData.reduce((acc, curr) => {
+    const date = moment(curr.timestamp).format('YYYY-MM-DD');
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push({
+      insulin: parseInt(curr.insulin),
+      timestamp: curr.timestamp,
+    });
+    return acc;
+  }, {});
 
   // Get the data from the grouped data from a date using datetimepicker
   const selectedDateGlucoseData = groupedGlucoseData[moment(selectedDate).format('YYYY-MM-DD')] || [];
@@ -212,7 +206,7 @@ const InformationChart = ({glucoseData, insulinData}) => {
             value={selectedDate}
             mode="date"
             display="default"
-            onChange={(date) => {
+            onChange={(event, date) => {
               setShowDatePicker(false);
               setSelectedDate(date);
             }}
