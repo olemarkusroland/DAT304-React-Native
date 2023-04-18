@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import BackgroundFetch from 'react-native-background-fetch';
 import { updateGlucose, updateInsulin } from './realm/CRUD.js';
-import { googleFitFetch } from '../src/services/Exercise/Exercice-Service.js'
+import { googleFitUpdateSteps } from '../src/services/Exercise/Exercice-Service.js'
 
 import { AuthenticationContext } from '../src/services/Auth/Auth-Context.js';
 
@@ -16,7 +16,7 @@ export const useBackgroundFetch = (realm, isAuthenticated) => {
                         console.log('[BackgroundFetch] taskId:', taskId);
                         await updateGlucose(realm);
                         await updateInsulin(realm);
-                        var data = await googleFitFetch(accessToken, realm)
+                        var data = await googleFitUpdateSteps(accessToken, realm)
                         BackgroundFetch.finish(taskId);
                     },
                     (taskId) => {
