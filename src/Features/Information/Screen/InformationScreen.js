@@ -4,46 +4,69 @@ import {
   StyleSheet,
   ActivityIndicator,
   Button,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import InformationChart from '../Component/infograph';
+import BasalChart from '../Component/infograph2';
+
 import { HealthContext } from '../../../services/Health/Health-Context';
 
 const InformationScreen = ({ navigation }) => {
+  const [chartHeight, setChartHeight] = useState(400);
   const { glucose, insulin } = useContext(HealthContext);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [formattedDate, setFormattedDate] = useState(selectedDate.toDateString());
+
+  const toggleChartHeight = () => {
+    setChartHeight(chartHeight === 400 ? 600 : 400);
+  };
 
   const onChange = (event, date) => {
     setShowDatePicker(false);
     setSelectedDate(date);
+    setFormattedDate(date.toDateString());
   };
 
   try {
     if (glucose.length > 0) {
       return (
         <View style={styles.container}>
-          <Button
+            <Text style={styles.DateText}>{formattedDate}</Text>
+            <TouchableOpacity
+            onPress={toggleChartHeight}>
+            <InformationChart
+                glucoseData={glucose}
+                insulinData={insulin}
+                width={394}
+                height={chartHeight}
+                selectedDate={selectedDate}
+                style={chartStyles.chart}
+            />
+            </TouchableOpacity>
+            <BasalChart
+                insulinData={insulin}
+                width={394}
+                height={100}
+                selectedDate={selectedDate}
+                style={chartStyles2.chart}>
+            </BasalChart>
+            <Button
             title="Select Date"
             onPress={() => setShowDatePicker(true)}
-          />
-          {showDatePicker && (
-            <DateTimePicker
-              value={selectedDate}
-              mode="date"
-              display="default"
-              onChange={onChange}
             />
-          )}
-
-          <InformationChart
-            glucoseData={glucose}
-            insulinData={insulin}
-            width={394}
-            height={500}
-            selectedDate={selectedDate}
-          />
+            {showDatePicker && (
+            <DateTimePicker
+                value={selectedDate}
+                mode="date"
+                display="default"
+                onChange={onChange}
+            />
+        )}
         </View>
+        
       );
     } else {
       return (
@@ -68,6 +91,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 'auto',
   },
+  DateText: {
+    fontSize: 26,
+    textAlign: 'center',
+  },
 });
+
+const chartStyles = StyleSheet.create({
+    chart: {
+        borderRadius: 4,
+        paddingRight: 45,
+        marginLeft: 45,
+    },});
+const chartStyles2 = StyleSheet.create({
+    chart: {
+        borderRadius: 4,
+        paddingRight: 45,
+        marginLeft: 45,
+        paddingTop: 10,
+    },});
 
 export default InformationScreen;

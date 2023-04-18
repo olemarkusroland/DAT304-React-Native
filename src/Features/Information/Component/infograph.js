@@ -1,11 +1,10 @@
-import React, {useState, useEffect, useMemo} from 'react';
-import {View, Text, Dimensions, Button} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, Text} from 'react-native';
 import moment from 'moment';
 import {LineChart} from 'react-native-chart-kit';
-import DateTimePicker from '@react-native-community/datetimepicker';
 
 
-const InformationChart = ({glucoseData, insulinData, width, height, selectedDate}) => {
+const InformationChart = ({glucoseData, insulinData, width, height, selectedDate, style}) => {
   if (!glucoseData || !insulinData) {
     return <Text>No health data available</Text>;
   }
@@ -21,7 +20,6 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
     ],
     legend: ["Loading.."] 
   });
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
 
   const groupedGlucoseData = glucoseData.reduce((acc, curr) => {
@@ -30,7 +28,7 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
       acc[date] = [];
     }
     acc[date].push({
-      glucose: parseInt(curr.glucose),
+      glucose: curr.glucose,
       timestamp: curr.timestamp,
     });
     return acc;
@@ -42,7 +40,7 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
       acc[date] = [];
     }
     acc[date].push({
-      insulin: parseInt(curr.insulin),
+      insulin: curr.insulin,
       timestamp: curr.timestamp,
     });
     return acc;
@@ -128,11 +126,9 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
     if (time.minute() === 0){
       //console.log('returned time: ', time.format('MMM Do YY, HH:mm'))
       return time.format('HH:mm');
-      
     } else {
       return '';
     }
-
   };
 
   const updateData = () => {
@@ -182,7 +178,7 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
   
   
   return (
-    <View style={{}}>
+    <View>
        <LineChart
         data={data}
         width={width}
@@ -194,11 +190,7 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
         chartConfig={chartConfig}
         verticalLabelRotation={90}
         fromZero={true}
-        style={{
-          borderRadius: 4,
-          paddingRight: 45,
-          marginLeft: 45,
-        }}
+        style={style}
       />
     </View>
   );
