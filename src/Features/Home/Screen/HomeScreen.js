@@ -11,7 +11,7 @@ import { HealthContext } from '../../../services/Health/Health-Context';
 
 
 export const HomeScreen = ({ navigation }) => {
-    const { glucose, insulin } = useContext(HealthContext);
+    const {glucose} = useContext(HealthContext);
     try {
         if (glucose.length > 0) {
             return (
