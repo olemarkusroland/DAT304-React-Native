@@ -6,23 +6,34 @@ export const FoodInfo = React.memo(function FoodInfo({ food, isSelected }) {
         ? Number(food.carbohydrates * food.grams / 1000).toFixed(0)
         : Number(food.carbohydrates).toFixed(0);
 
-    const carbUnit = isSelected ? 'Carbs/amount' : 'Carbs/kg';
-
     return (
         <View style={styles.container}>
-            <Text style={styles.name}>{food.name}</Text>
-            <Text style={styles.description}>
-                {carbUnit}: {formattedCarbs}
-            </Text>
-            {isSelected && (
-                <Text style={styles.grams}>Amount: {food.grams}g</Text>
+            {isSelected ? (
+                <View>
+                    <Text style={styles.name}>{food.name}</Text>
+                    <Text style={styles.grams}>{food.grams}g</Text>
+                </View>
+            ) : (
+                <Text style={styles.name}>{food.name}</Text>
             )}
+            <View>
+                {isSelected && (
+                    <Text style={styles.description}>
+                        Carbs/kg: {Number(food.carbohydrates).toFixed(0)}
+                    </Text>
+                )}
+                <Text style={styles.description}>
+                    {isSelected ? "Carbs/amount" : "Carbs/kg"}: {formattedCarbs}
+                </Text>
+            </View>
         </View>
     );
 });
 
 const styles = StyleSheet.create({
     container: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         backgroundColor: 'white',
         padding: 10,
         marginBottom: 10,
@@ -31,14 +42,13 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 5,
     },
     description: {
-        fontSize: 14,
+        fontSize: 18,
         color: 'gray',
     },
     grams: {
-        fontSize: 14,
+        fontSize: 18,
         color: 'gray',
     },
 });

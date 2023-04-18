@@ -12,15 +12,21 @@ import { Search } from '../Component/Search';
 import { EditSelection } from '../Component/EditSelection';
 import SelectedFoodsHeader from '../Component/SelectedFoodHeader';
 import { styles } from '../../../Styles';
+import { useFocusEffect } from '@react-navigation/native';
 
 export const FoodScreen = ({ navigation }) => {
-    const { foods, selectedFoods, RemoveFood, CreateMeal } = useContext(FoodContext);
+    const { foods, selectedFoods, RemoveFood, CreateMeal, fetchFoods } = useContext(FoodContext);
 
     const [pickedFood, setPickedFood] = useState([]);
     const [showIconButtons, setShowIconButtons] = useState(false);
     const [foodsToRemove, setFoodsToRemove] = useState([]);
 
     const SearchHeaderComponent = <Search />;
+
+    const openCreateFoodScreen = () => {
+        navigation.navigate('FoodCreate');
+    };
+
     const renderFood = useCallback(
         ({ item }) => {
             if (!item || !item.name) {
@@ -98,8 +104,22 @@ export const FoodScreen = ({ navigation }) => {
         );
     };
 
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchFoods();
+        }, [])
+    );
+
+
     return (
         <View style={{ flex: 1 }}>
+            <View>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={openCreateFoodScreen}>
+                    <Text style={styles.buttonText}>Create Food</Text>
+                </TouchableOpacity>
+            </View>
             <FlatList
                 data={foods}
                 renderItem={renderFood}

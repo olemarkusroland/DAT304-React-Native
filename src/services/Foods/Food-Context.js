@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import debounce from 'lodash.debounce';
-import { getFoods, addFoodEntry, addMeal, addExampleFoods, getFoodEntries } from './Food-Service';
+import { getFoods, addFood, addFoodEntry, addMeal, addExampleFoods, getFoodEntries } from './Food-Service';
 
 export const FoodContext = createContext();
 
@@ -50,19 +50,19 @@ export const FoodContextProvider = ({ children }) => {
         );
     };
 
-    useEffect(() => {
-        const fetchFoods = async () => {
-            try {
-                await addExampleFoods();
-                const foods = await getFoods();
-                setFoods(foods);
-                setFilteredFoods(foods);
-                console.log('Foods fetched successfully', foods);
-            } catch (error) {
-                console.error('Error fetching foods:', error);
-            }
-        };
+    const fetchFoods = async () => {
+        try {
+            await addExampleFoods();
+            const foods = await getFoods();
+            setFoods(foods);
+            setFilteredFoods(foods);
+            console.log('Foods fetched successfully', foods);
+        } catch (error) {
+            console.error('Error fetching foods:', error);
+        }
+    };
 
+    useEffect(() => {
         fetchFoods();
     }, []);
 
@@ -95,7 +95,9 @@ export const FoodContextProvider = ({ children }) => {
                 AddFood: addDistinctFood,
                 RemoveFood: removeSelectedFood,
                 CreateMeal: createMealFromSelectedFoods,
-                getFoodEntries
+                addFood,
+                getFoodEntries,
+                fetchFoods,
             }}>
             {children}
         </FoodContext.Provider>
