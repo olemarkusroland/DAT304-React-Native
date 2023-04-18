@@ -1,4 +1,6 @@
 import React, { useState, createContext, useEffect } from 'react';
+import moment from 'moment';
+
 import { HealthService } from './Health-Service';
 import { realmOpen } from '../../../backend/realm/utils';
 
@@ -38,6 +40,7 @@ export const HealthContextProvider = ({ children }) => {
             try {
                 const glucoseData = await HealthService.getGlucoses(realm);
                 const insulinData = await HealthService.getInsulins(realm);
+                
                 setGlucose(glucoseData);
                 setInsulin(insulinData);
             } catch (error) {

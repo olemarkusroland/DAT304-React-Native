@@ -8,17 +8,22 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { HealthContext } from '../../../services/Health/Health-Context';
-
+import InformationChart from '../../Information/Component/infograph';
 
 export const HomeScreen = ({ navigation }) => {
-    const {glucose} = useContext(HealthContext);
+    const {glucose, insulin} = useContext(HealthContext);
     try {
         if (glucose.length > 0) {
             return (
                 <View style={styles.container}>
                     <Text style={styles.GlucoseValue}>{glucose[0].glucose}mg/dl</Text>
                     <Text style={styles.TimeValue}>{glucose[0].timestamp.toLocaleString()}</Text>
-                  
+                    <InformationChart 
+                      glucoseData={glucose} 
+                      insulinData={insulin}
+                      width={300}
+                      height={200}
+                    ></InformationChart>
                 </View>
 
             );

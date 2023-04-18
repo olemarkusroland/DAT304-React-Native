@@ -5,7 +5,7 @@ import {LineChart} from 'react-native-chart-kit';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 
-const InformationChart = ({glucoseData, insulinData}) => {
+const InformationChart = ({glucoseData, insulinData, width, height, selectedDate}) => {
   if (!glucoseData || !insulinData) {
     return <Text>No health data available</Text>;
   }
@@ -21,9 +21,9 @@ const InformationChart = ({glucoseData, insulinData}) => {
     ],
     legend: ["Loading.."] 
   });
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  
+
+
   const groupedGlucoseData = glucoseData.reduce((acc, curr) => {
     const date = moment(curr.timestamp).format('YYYY-MM-DD');
     if (!acc[date]) {
@@ -185,8 +185,8 @@ const InformationChart = ({glucoseData, insulinData}) => {
     <View style={{}}>
        <LineChart
         data={data}
-        width={392}
-        height={500}
+        width={width}
+        height={height}
         yAxisSuffix="u"
         yAxisInterval={2}
         xAxisInterval={1}
@@ -200,19 +200,6 @@ const InformationChart = ({glucoseData, insulinData}) => {
           marginLeft: 45,
         }}
       />
-       <Button title="Select Date" onPress={() => setShowDatePicker(true)} />
-        {showDatePicker && (
-          <DateTimePicker
-            value={selectedDate}
-            mode="date"
-            display="default"
-            onChange={(event, date) => {
-              setShowDatePicker(false);
-              setSelectedDate(date);
-            }}
-          />
-        )}
-
     </View>
   );
 };
