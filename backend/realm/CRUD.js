@@ -603,3 +603,49 @@ export async function deleteUser(realm, userId) {
         return false;
     }
 }
+
+
+export async function createExericise(realm, steps, start, end) {
+    try {
+        await realm.write(() => {
+            const newExerice = realm.create('ExercicesInfo', {
+                steps,
+                start,
+                end,
+            });
+        });
+
+       
+    } catch (error) {
+        console.log('Error creating Exercise:', error);
+    }
+}
+
+export async function deleteExerciseByTimestamp(realm, timestamp) {
+   
+    const entriesToDelete = realm.objects('ExercicesInfo').filtered('start > $0', timestamp);
+   
+    console.log("Deleted entires : " + entriesToDelete.length);
+
+
+    realm.write(() => {
+        realm.delete(entriesToDelete);
+    });
+
+    
+}
+
+export async function readAllExercises(realm) {
+    const allEntries = realm.objects('ExercicesInfo');
+   
+    console.log(allEntries);
+    return allEntries;
+}
+
+export async function deleteAllExercises(realm) {
+    const allEntries = realm.objects('ExercicesInfo');
+
+    realm.write(() => {
+        realm.delete(allEntries);
+    });
+}
