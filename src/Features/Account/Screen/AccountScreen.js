@@ -1,17 +1,12 @@
 import React, {useContext, useState} from 'react';
 import {
-  Button,
-  KeyboardAvoidingView,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
   ActivityIndicator,
   Image,
 } from 'react-native';
 import { GoogleSocialButton } from "react-native-social-buttons";
-import SocialButton from "react-native-social-button";
 
 import {AuthenticationContext} from '../../../services/Auth/Auth-Context';
 
@@ -30,11 +25,13 @@ export const AccountScreen = ({navigation}) => {
       <View>
           <Image
             style={local.logo}
-            source={require('../../Authentication/Component/logo.png')}
+            source={require('../../Authentication/Component/logo1.png')}
           />
           <Text style={local.text}>Welcome to DMA</Text>
           <GoogleSocialButton
-          style={local.googleButton}
+          buttonViewStyle={local.googleButton}
+          textStyle={local.googleButtonText}
+          logoStyle={local.googleButtonLogo}
           onPress={handleClick}>
           </GoogleSocialButton>
       </View>
@@ -62,15 +59,25 @@ const local = StyleSheet.create({
     fontSize: 36,
   },
   logo: {
-    width: 200,
+    width: 400,
     height: 200,
     alignSelf: 'center',
-
 },
   googleButton:{
     width: 200,
     height: 50,
-  },  
+    backgroundColor: 'grey',
+    alignSelf: 'center',
+    }, 
+  googleButtonLogo:{
+    width: 30,
+    height: 30,
+  },
+  googleButtonText:{
+    color: 'white',
+    fontSize: 16,
+  },
+
   button: {
     width: '90%',
     padding: 15,
