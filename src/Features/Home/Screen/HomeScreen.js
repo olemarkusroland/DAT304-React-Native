@@ -16,16 +16,16 @@ export const HomeScreen = ({ navigation }) => {
         if (glucose.length > 0) {
             return (
                 <View>
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                         onPress={() => navigation.navigate('Info')}>
-                    <InformationChart
+                        <InformationChart
                         style={styles.Chart}
                         glucoseData={glucose} 
                         insulinData={insulin}
                         width={300}
                         height={300}
                     />
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
 
 
                     <Text style={styles.GlucoseValue}>{glucose[0].glucose}mg/dl</Text>
@@ -37,6 +37,7 @@ export const HomeScreen = ({ navigation }) => {
         else {
             return (
                 <View style={styles.container}>
+                    <Text>Loading...</Text>
                     <ActivityIndicator size="large" color="#0000ff" />
                    
                 </View>
@@ -57,10 +58,11 @@ const styles = StyleSheet.create({
   GlucoseValue: {
     fontSize: 52,
     textAlign: 'center',
+    color: 'white',
   },
   TimeValue: {
     fontSize: 24,
-    color: 'grey',
+    color: 'white',
     textAlign: 'center',
 
   },

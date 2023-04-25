@@ -46,13 +46,6 @@ const InformationScreen = ({ navigation }) => {
                 style={chartStyles.chart}
             />
             </TouchableOpacity>
-            <BasalChart
-                insulinData={insulin}
-                width={394}
-                height={100}
-                selectedDate={selectedDate}
-                style={chartStyles2.chart}>
-            </BasalChart>
             <Button
             title="Select Date"
             onPress={() => setShowDatePicker(true)}
