@@ -12,6 +12,7 @@ import InformationChart from '../../Information/Component/infograph';
 
 export const HomeScreen = ({ navigation }) => {
     const {glucose, insulin} = useContext(HealthContext);
+    console.log(insulin);
     try {
         if (glucose.length > 0) {
             return (
@@ -27,7 +28,14 @@ export const HomeScreen = ({ navigation }) => {
                     />
                   </TouchableOpacity> */}
 
-
+                    <Button
+                    title='Insulin'
+                    onPress={() => console.log('Insulin Logged: ', insulin)}>
+                    </Button>
+                    <Button
+                    title='Glucose'
+                    onPress={() => console.log('Glucose Logged: ', glucose)}>
+                    </Button>
                     <Text style={styles.GlucoseValue}>{glucose[0].glucose}mg/dl</Text>
                     <Text style={styles.TimeValue}>{glucose[0].timestamp.toLocaleString()}</Text>
                 </View>

@@ -20,8 +20,18 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
     ],
     legend: ["Loading.."] 
   });
-
-
+  const [data2, setData2] = useState({
+    labels: ['13:00',],
+    datasets: [
+      {
+        data: [0,],
+        color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+        strokeWidth: 2
+      }
+      
+    ],
+    legend: ["Loading.."] 
+  });
   const groupedGlucoseData = glucoseData.reduce((acc, curr) => {
     const date = moment(curr.timestamp).format('YYYY-MM-DD');
     if (!acc[date]) {
@@ -111,7 +121,7 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
   }
   
   
-  setInsulinValues(sortedGroupedUpdatedData);
+  //setInsulinValues(sortedGroupedUpdatedData);
 
   const glucoseValues = sortedGroupedUpdatedData.map((item) => item.glucose ?? null);
   const insulinValues = sortedGroupedUpdatedData.map((item) => item.insulin ?? null);
@@ -151,11 +161,14 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
       legend: ["Glucose", "Insulin"]
     };
     setData(newData);
+    //console.log(newData.datasets[1]);
+    //setData2(newData.datasets[1]);
     };
 
   // Update data when the date changes
   useEffect(() => {
     updateData();
+    console.log(insulinData);
   }, [selectedDate]);
 
 
@@ -192,6 +205,7 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
         fromZero={true}
         style={style}
       />
+      
     </View>
   );
 };

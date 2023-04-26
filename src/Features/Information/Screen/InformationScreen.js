@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
   DateText: {
     fontSize: 26,
     textAlign: 'center',
+    color: 'white',
   },
 });
 
