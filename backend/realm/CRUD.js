@@ -120,7 +120,20 @@ export async function readLatestInsulin(realm) {
     try {
         if (realm) {
             let insulinInfos = await realm.objects('InsulinInfo');
-            // remove all insulin values that are 0
+            insulinInfos = insulinInfos.map(info => {
+                if (info.insulin === 0) {
+                  return {
+                    basal: info.basal,
+                    timestamp: info.timestamp
+                  };
+                } else {
+                    console.log('Insulin found in insulinInfos!');
+                  return {
+                    insulin: info.insulin,
+                    timestamp: info.timestamp
+                  };
+                }
+              });
             
             if (insulinInfos.isEmpty()) {
                 return null;
