@@ -36,7 +36,7 @@ export const createScreenOptions = ({route}) => {
     tabBarIcon: ({size, color}) => {
       return <Icons iconName={iconName} size={size} color={color} />;
     },
-    tabBarActiveTintColor: 'tomato',
+    tabBarActiveTintColor: 'white',
     tabBarInactiveTintColor: 'grey',
     tabBarStyle: [
       {

@@ -15,6 +15,7 @@ export class InsulinInfo extends Realm.Object {
     name: 'InsulinInfo',
     properties: {
       insulin: 'float',
+      basal: 'float',
       timestamp: 'date',
     },
   };

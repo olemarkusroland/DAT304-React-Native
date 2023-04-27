@@ -6,12 +6,21 @@ import { useBackgroundFetch } from '../../../backend/background-fetch';
 import { AuthenticationContext } from '../../services/Auth/Auth-Context';
 import { AppNavigator } from './app-navigator';
 import { AccountNavigator } from './account-navigation';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme} from '@react-navigation/native';
+const MyTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#FFFFFF',
+      background: '#1F456E',
+      card: '#0A1172',
+      text: '#FFFFFF',
+    },
+  };
 
 const Navigation = () => {
     const [realm, setRealm] = useState(null);
     const { isAuthenticated } = useContext(AuthenticationContext);
-
     useEffect(() => {
         const initializeRealm = async () => {
             const r = await realmOpen();
@@ -28,7 +37,7 @@ const Navigation = () => {
 
     return (
         <View style={styles.container}>
-            <NavigationContainer>
+            <NavigationContainer theme={MyTheme}>
                 {isAuthenticated ? <AppNavigator /> : <AccountNavigator />}
             </NavigationContainer>
         </View>

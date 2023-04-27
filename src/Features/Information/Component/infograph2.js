@@ -1,136 +1,133 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Dimensions} from 'react-native';
+import {View, Text} from 'react-native';
 import moment from 'moment';
 import {LineChart} from 'react-native-chart-kit';
 
-const InformationChart1 = ({glucoseData, insulinData}) => {
-  if (!glucoseData) {
+
+const BasalChart = ({insulinData, width, height, selectedDate, style}) => {
+  if (!insulinData) {
     return <Text>No health data available</Text>;
   }
-
-
-  const formatXLabeltest = (value, hours) => {
-    if (!value) {
-      return '';
-    }
-    try {
-      const test = moment.utc(value, 'YYYY-MM-DDTHH:mm:ss.sssZ', false);
-
-      //console.log(`${test.format('HH:mm')}`);
-      return `${test.format('HH:mm')}`;
-    } catch (error) {
-      console.error(error);
-      return '';
-    }
-  };
-
-  const glucoseMappedData = {
-    labels: glucoseData
-      .filter(
-        (data, index) =>
-          index === 0 ||
-          index === glucoseData.length - 1 ||
-          index % Math.floor(glucoseData.length / 4) === 0,
-      )
-
-      .map(data => formatXLabeltest(data.timestamp, 4)),
+  const [data, setData] = useState({
+    labels: ['13:00',],
     datasets: [
       {
-        data: glucoseData.map(data => data.glucose),
-      },
+        data: [0,],
+        color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+        strokeWidth: 2
+      }
+      
     ],
+    legend: ["Loading.."] 
+  });
+
+  
+  const groupedInsulinData = insulinData.reduce((acc, curr) => {
+    const date = moment(curr.timestamp).format('YYYY-MM-DD');
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push({
+      insulin: curr.insulin,
+      timestamp: curr.timestamp,
+    });
+    return acc;
+  }, {});
+
+  // Get the data from the grouped data from a date using datetimepicker
+  const selectedDateInsulinData = groupedInsulinData[moment(selectedDate).format('YYYY-MM-DD')] || [];
+  const sortedGroupedValues = selectedDateInsulinData.sort((a, b) => {
+    const timeA = moment(a.timestamp);
+    const timeB = moment(b.timestamp);
+    return timeA.diff(timeB, 'milliseconds');
+  });
+
+  //console.log('sorted grouped values: ', sortedGroupedValues);
+
+  // Split the values into two arrays, one for the values and one for the timestamps.
+
+  const sortedGroupedUpdatedData = sortedGroupedValues.map((item) => ({
+    timestamp: moment(item.timestamp).format('HH:mm'),
+    insulin: item.insulin ?? null,
+  }));
+
+  // Find an insulin value, check the closest timestamp for glucose value (before and after)
+  // Interpolate the two glucose values and set the insulin value equal to the interpolated
+  // value. This is to find an estimated value when the user inserted insulin.
+  const insulinValues = sortedGroupedUpdatedData.map((item) => item.insulin ?? null);
+  const timestamps = sortedGroupedUpdatedData.map((item) => item.timestamp);  
+
+
+  //console.log(sortedGroupedUpdatedData);
+
+  const formatXLabel = (timestamps) => {
+
+    const time = moment(timestamps, 'HH:mm');
+    if (time.minute() === 0){
+      //console.log('returned time: ', time.format('MMM Do YY, HH:mm'))
+      return time.format('HH:mm');
+    } else {
+      return '';
+    }
   };
 
-  const insulinMappedData = insulinData
-    ? {
-        labels: insulinData
-          .filter(
-            (data, index) =>
-              index === 0 ||
-              index === glucoseData.length - 1 ||
-              index % Math.floor(glucoseData.length / 4) === 0,
-          )
+  const updateData = () => {
+    // Replace the placeholder data with actual data
+    
+    const newData = {
+      labels: timestamps,
+      datasets: [
+        {
+          data: insulinValues,
+          color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
+          strokeWidth: 0.1,
+        }
+      ],
+      legend: ["Basal Insulin"]
+    };
+    setData(newData);
+    };
 
-          .map(data => formatXLabeltest(data.timestamp, 4)),
-        datasets: [
-          {
-            data: insulinData.map(data => data.insulin),
-          },
-        ],
-      }
-    : [];
-
+  // Update data when the date changes
+  useEffect(() => {
+    updateData();
+    
+  }, [selectedDate]);
+  console.log(selectedDateInsulinData);
+  
+  const chartConfig = {
+    xAxisLabelRotation: 90,
+    backgroundColor: '#DCDCDD',
+    backgroundGradientFrom: '#28666E',
+    backgroundGradientTo: '#4BB1BE',
+    decimalPlaces: 0, // optional, defaults to 2dp
+    color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    propsForDots: {
+      r: "3",
+      strokeWidth: "0.5",
+      stroke: "#fff"
+    }
+    
+  };
+  
+  
   return (
-    <View style={{padding: 10}}>
-      <LineChart
-        data={glucoseMappedData}
-        withDots={false}
-        width={Dimensions.get('window').width}
-        height={300}
-        yAxisSuffix="mg/dl"
-        yAxisInterval={4}
-        yLabelsOffset={-4}
-        withInnerLines={false}
-        withOuterLines={false}
-        chartConfig={{
-          backgroundColor: '#e26a00',
-          backgroundGradientFrom: '#fb8c00',
-          backgroundGradientTo: '#ffa726',
-          decimalPlaces: 2, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          style: {
-            marginVertical: 20,
-            marginLeft: 30,
-            marginRight: 30,
-            borderRadius: 16,
-          },
-          propsForDots: {
-            r: '6',
-            strokeWidth: '2',
-            stroke: '#ffa726',
-          },
-        }}
-        bezier
-        style={{
-          marginVertical: 15,
-          marginLeft: 15,
-          marginRight: 15,
-          borderRadius: 16,
-        }}
+    <View>
+       <LineChart
+        data={data}
+        width={width}
+        height={height}
+        yAxisSuffix="u"
+        yAxisInterval={2}
+        xAxisInterval={1}
+        formatXLabel={formatXLabel}
+        chartConfig={chartConfig}
+        verticalLabelRotation={90}
+        fromZero={true}
+        style={style}
       />
-      {insulinData.length > 0 && (
-        <LineChart
-          data={insulinMappedData}
-          width={Dimensions.get('window').width}
-          height={300}
-          yAxisSuffix="g"
-          yAxisInterval={1}
-          chartConfig={{
-            backgroundColor: 'transparent',
-            backgroundGradientFrom: 'transparent',
-            backgroundGradientTo: 'transparent',
-            decimalPlaces: 2,
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            style: {
-              borderRadius: 16,
-            },
-            propsForDots: {
-              r: '6',
-              strokeWidth: '2',
-              stroke: '#ffa726',
-            },
-          }}
-          bezier
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-          }}
-        />
-      )}
     </View>
   );
 };
-export default InformationChart1;
+export default BasalChart;
