@@ -65,7 +65,6 @@ export async function updateGlucose(realm) {
     }
 
     const latestGlucose = await readLatestGlucose(realm);
-
     const currentDate = new Date();
     const fromDate =
         latestGlucose === null ? getLastMonthDate() : new Date(latestGlucose);
@@ -121,7 +120,8 @@ export async function readLatestInsulin(realm) {
     try {
         if (realm) {
             let insulinInfos = await realm.objects('InsulinInfo');
-
+            // remove all insulin values that are 0
+            
             if (insulinInfos.isEmpty()) {
                 return null;
             }
@@ -162,39 +162,43 @@ export async function updateInsulin(realm) {
             if (insulinInfo.insulin != null && insulinInfo.created_at != null) {
 
                 var basal = await getBasal(insulinInfo.created_at.toString());
-
-
                 var parse_basal = parseFloat(basal);
-
-                var parse_insulin = parseFloat(insulinInfo.insulin);
-
-
-                var insulin = parse_insulin + parse_basal;
-
+                var insulin = parseFloat(insulinInfo.insulin);
                 var date = insulinInfo.created_at;
-
                 await realm.write(async () => {
                     realm.create('InsulinInfo', {
                         insulin: insulin,
+                        basal: parse_basal,
                         timestamp: date,
                     });
                 });
             }
-
+                var date = currentDate.toISOString();
+                var basal = await getBasal(date);
+                var basal_parse = parseFloat(basal);
+                var insulin = 0;
+                
+                console.log('No insulin entries to add to database. but added Basal...' + insulin)
+                await realm.write(() => {
+                    realm.create('InsulinInfo', {
+                        insulin: insulin,
+                        basal: basal_parse,
+                        timestamp: date,
+                    });
+                });
         }
-
-
         console.log('Database: Insulin updated');
     } else {
-
         var date = currentDate.toISOString();
         var basal = await getBasal(date);
-        var insulin = parseFloat(basal);
+        var parse_basal = parseFloat(basal);
+        var insulin = 0;
         
         console.log('No insulin entries to add to database. but added Basal...' + insulin)
         await realm.write(() => {
             realm.create('InsulinInfo', {
                 insulin: insulin,
+                basal: parse_basal,
                 timestamp: date,
             });
         });

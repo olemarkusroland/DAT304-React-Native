@@ -9,6 +9,7 @@ export const HealthService = {
             const toDate = new Date();
 
             let insulinData = await readInsulins(realm, fromDate, toDate);
+            //console.log(insulinData);
 
             if (insulinData === null) {
                 return [];

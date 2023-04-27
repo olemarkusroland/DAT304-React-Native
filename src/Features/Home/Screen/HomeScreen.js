@@ -12,12 +12,11 @@ import InformationChart from '../../Information/Component/infograph';
 
 export const HomeScreen = ({ navigation }) => {
     const {glucose, insulin} = useContext(HealthContext);
-    console.log(insulin);
     try {
         if (glucose.length > 0) {
             return (
-                <View>
-                  {/* <TouchableOpacity
+                <View style={styles.container}>
+                  <TouchableOpacity
                         onPress={() => navigation.navigate('Info')}>
                         <InformationChart
                         style={styles.Chart}
@@ -26,7 +25,7 @@ export const HomeScreen = ({ navigation }) => {
                         width={300}
                         height={300}
                     />
-                  </TouchableOpacity> */}
+                  </TouchableOpacity>
 
                     <Button
                     title='Insulin'
@@ -45,7 +44,7 @@ export const HomeScreen = ({ navigation }) => {
         else {
             return (
                 <View style={styles.container}>
-                    <Text>Loading...</Text>
+                    <Text style={{color: 'white', fontSize: 32}}>Loading...</Text>
                     <ActivityIndicator size="large" color="#0000ff" />
                    
                 </View>

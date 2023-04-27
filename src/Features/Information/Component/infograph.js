@@ -51,6 +51,7 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
     }
     acc[date].push({
       insulin: curr.insulin,
+      basal: curr.basal,
       timestamp: curr.timestamp,
     });
     return acc;
@@ -60,7 +61,16 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
   const selectedDateGlucoseData = groupedGlucoseData[moment(selectedDate).format('YYYY-MM-DD')] || [];
   const selectedDateInsulinData = groupedInsulinData[moment(selectedDate).format('YYYY-MM-DD')] || [];
 
+
+  // Basal data does not exist beyond current date.
+
+  //console.log('selected date insulin data: ', groupedInsulinData);
+  //console.log('selected date insulin data: ', selectedDateInsulinData);
+
   const groupedDateData =  selectedDateGlucoseData.concat(selectedDateInsulinData);
+  
+  //console.log(insulinData);
+
   const sortedGroupedValues = groupedDateData.sort((a, b) => {
     const timeA = moment(a.timestamp);
     const timeB = moment(b.timestamp);
@@ -75,8 +85,9 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
     timestamp: moment(item.timestamp).format('HH:mm'),
     glucose: item.glucose ?? null,
     insulin: item.insulin ?? null,
+    basal: item.basal ?? null,
   }));
-
+  //console.log('Sorted grouped data: ', sortedGroupedUpdatedData);
   // Find an insulin value, check the closest timestamp for glucose value (before and after)
   // Interpolate the two glucose values and set the insulin value equal to the interpolated
   // value. This is to find an estimated value when the user inserted insulin.
@@ -125,9 +136,8 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
 
   const glucoseValues = sortedGroupedUpdatedData.map((item) => item.glucose ?? null);
   const insulinValues = sortedGroupedUpdatedData.map((item) => item.insulin ?? null);
+  const basalValues = sortedGroupedUpdatedData.map((item) => item.basal ?? null);
   const timestamps = sortedGroupedUpdatedData.map((item) => item.timestamp);  
-
-
   //console.log(sortedGroupedUpdatedData);
 
   const formatXLabel = (timestamps) => {
@@ -160,7 +170,19 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
       ],
       legend: ["Glucose", "Insulin"]
     };
+    /* const newData2 = {
+      labels: timestamps,
+      datasets: [
+        {
+          data: basalValues,
+          color: (opacity = 1) => `rgba(119, 207, 153, ${opacity})`,
+          strokeWidth: 2,
+        },
+      ],
+      legend: ["Basal Insulin"]
+    }; */
     setData(newData);
+    //setData2(newData2);
     //console.log(newData.datasets[1]);
     //setData2(newData.datasets[1]);
     };
@@ -168,7 +190,6 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
   // Update data when the date changes
   useEffect(() => {
     updateData();
-    console.log(insulinData);
   }, [selectedDate]);
 
 
