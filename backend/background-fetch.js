@@ -10,6 +10,7 @@ export const useBackgroundFetch = (realm, isAuthenticated) => {
     useEffect(() => {
         if (realm && isAuthenticated) {
             const initBackgroundFetch = async () => {
+                const timeStart = global.nativePerformanceNow();
                 await BackgroundFetch.configure(
                     { minimumFetchInterval: 15 },
                     async (taskId) => {
@@ -19,6 +20,8 @@ export const useBackgroundFetch = (realm, isAuthenticated) => {
                         await updateGlucose(realm);
                         await updateInsulin(realm);
                         var data = await googleFitUpdateSteps(accessToken, realm)
+                        const timeEnd = global.nativePerformanceNow();
+                        console.log(`Adding data BGF time spent: ${timeEnd - timeStart}ms`);
                         BackgroundFetch.finish(taskId);
                     },
                     (taskId) => {
@@ -29,7 +32,12 @@ export const useBackgroundFetch = (realm, isAuthenticated) => {
 
                 const status = await BackgroundFetch.status();
                 console.log('[BackgroundFetch] status:', status);
+                const timeEnd2 = global.nativePerformanceNow();
+                console.log("Background fetch END spent:", Date.now());
+                console.log(`Time: ${timeEnd2 - timeStart}ms`);
             };
+            
+            console.log("Init backgroundFetch started at:", Date.now());
 
             initBackgroundFetch();
         }
@@ -44,8 +52,8 @@ export const useBackgroundFetch = (realm, isAuthenticated) => {
                     delay: 3000,
                 });
             };
-
             scheduleTestTask();
+
         }
     }, [isAuthenticated]);
 };

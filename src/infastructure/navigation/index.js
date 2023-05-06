@@ -33,8 +33,11 @@ const Navigation = () => {
     }, [isAuthenticated]);
 
     //deleteRealmFile()
+    console.log('backgrounfetch executed??');
+    const timeStart = global.nativePerformanceNow();
     useBackgroundFetch(realm, isAuthenticated);
-
+    const timeEnd = global.nativePerformanceNow();
+    console.log(`bgf in ms: ${timeEnd - timeStart}ms`);
     return (
         <View style={styles.container}>
             <NavigationContainer theme={MyTheme}>

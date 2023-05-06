@@ -10,7 +10,6 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import InformationChart from '../Component/infograph';
 import BasalChart from '../Component/infograph2';
-
 import { HealthContext } from '../../../services/Health/Health-Context';
 
 const InformationScreen = ({ navigation }) => {
@@ -29,6 +28,9 @@ const InformationScreen = ({ navigation }) => {
     setSelectedDate(date);
     setFormattedDate(date.toDateString());
   };
+  const currentDate = new Date();
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(currentDate.getDate() - 7);
 
   try {
     if (glucose.length > 0) {
@@ -53,6 +55,8 @@ const InformationScreen = ({ navigation }) => {
             {showDatePicker && (
             <DateTimePicker
                 value={selectedDate}
+                minimumDate={sevenDaysAgo}
+                maximumDate={currentDate}
                 mode="date"
                 display="default"
                 onChange={onChange}

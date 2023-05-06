@@ -69,9 +69,9 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
 
   const groupedDateData =  selectedDateGlucoseData.concat(selectedDateInsulinData);
   
-  //console.log(insulinData);
+  //console.log('grouped insulin: ',groupedInsulinData);
 
-  const sortedGroupedValues = groupedDateData.sort((a, b) => {
+  const sortedGroupedValues = selectedDateGlucoseData.sort((a, b) => {
     const timeA = moment(a.timestamp);
     const timeB = moment(b.timestamp);
     return timeA.diff(timeB, 'milliseconds');
@@ -84,8 +84,6 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
   const sortedGroupedUpdatedData = sortedGroupedValues.map((item) => ({
     timestamp: moment(item.timestamp).format('HH:mm'),
     glucose: item.glucose ?? null,
-    insulin: item.insulin ?? null,
-    basal: item.basal ?? null,
   }));
   //console.log('Sorted grouped data: ', sortedGroupedUpdatedData);
   // Find an insulin value, check the closest timestamp for glucose value (before and after)
@@ -138,7 +136,8 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
   const insulinValues = sortedGroupedUpdatedData.map((item) => item.insulin ?? null);
   const basalValues = sortedGroupedUpdatedData.map((item) => item.basal ?? null);
   const timestamps = sortedGroupedUpdatedData.map((item) => item.timestamp);  
-  //console.log(sortedGroupedUpdatedData);
+  //console.log(timestamps);
+
 
   const formatXLabel = (timestamps) => {
 
@@ -162,13 +161,13 @@ const InformationChart = ({glucoseData, insulinData, width, height, selectedDate
           color: (opacity = 1) => `rgba(119, 207, 153, ${opacity})`,
           strokeWidth: 2,
         },
-        {
+        /* {
           data: insulinValues,
           color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
           strokeWidth: 0.1,
-        }
+        } */
       ],
-      legend: ["Glucose", "Insulin"]
+      legend: ["Glucose"]
     };
     /* const newData2 = {
       labels: timestamps,

@@ -9,14 +9,13 @@ import {
 } from 'react-native';
 import { HealthContext } from '../../../services/Health/Health-Context';
 import InformationChart from '../../Information/Component/infograph';
-
 export const HomeScreen = ({ navigation }) => {
     const {glucose, insulin} = useContext(HealthContext);
     try {
         if (glucose.length > 0) {
             return (
                 <View style={styles.container}>
-                  <TouchableOpacity
+{/*                   <TouchableOpacity
                         onPress={() => navigation.navigate('Info')}>
                         <InformationChart
                         style={styles.Chart}
@@ -25,16 +24,8 @@ export const HomeScreen = ({ navigation }) => {
                         width={300}
                         height={300}
                     />
-                  </TouchableOpacity>
-
-                    <Button
-                    title='Insulin'
-                    onPress={() => console.log('Insulin Logged: ', insulin)}>
-                    </Button>
-                    <Button
-                    title='Glucose'
-                    onPress={() => console.log('Glucose Logged: ', glucose)}>
-                    </Button>
+                  </TouchableOpacity> */}
+                    <Text style={styles.consoleText}>Update glucose test:</Text>
                     <Text style={styles.GlucoseValue}>{glucose[0].glucose}mg/dl</Text>
                     <Text style={styles.TimeValue}>{glucose[0].timestamp.toLocaleString()}</Text>
                 </View>
@@ -61,6 +52,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  consoleText:{
+    color: 'white'
   },
   GlucoseValue: {
     fontSize: 52,
