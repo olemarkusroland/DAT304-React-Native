@@ -1,66 +1,101 @@
-import React, { useState, createContext, useEffect } from 'react';
+import React, {useState, createContext, useEffect, useCallback, useMemo, useRef} from 'react';
 import moment from 'moment';
 
 import { HealthService } from './Health-Service';
 import { realmOpen } from '../../../backend/realm/utils';
+import * as realm from "realm";
 
 export const HealthContext = createContext();
 
 export const HealthContextProvider = ({ children }) => {
     const [glucose, setGlucose] = useState([]);
     const [insulin, setInsulin] = useState([]);
+    const [latestGlucose, setLatestGlucose] = useState([]);
+    const [realmInstance, setRealmInstance] = useState(null);
 
+    const isRealmOpened = useRef(false);
+
+
+    //CHANGE TO useFocusEffect IN THE USEFFECT https://reactnavigation.org/docs/use-focus-effect
+    // maybe?
     useEffect(() => {
-        const fetchData = async () => {
-            const realm = await realmOpen();
-
-            const glucoseListener = (newGlucose, changes) => {
-                const oneWeekAgo = new Date();
-                oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-                const glucoseEntriesLast7Days = newGlucose.filter(
-                    entry => new Date(entry.timestamp) >= oneWeekAgo,
-                );
-                setGlucose(glucoseEntriesLast7Days);
-            };
-
-            const insulinListener = (newInsulin, changes) => {
-                const oneWeekAgo = new Date();
-                oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-                const insulinEntriesLast7Days = newInsulin.filter(
-                    entry => new Date(entry.timestamp) >= oneWeekAgo,
-                );
-                setInsulin(insulinEntriesLast7Days);
-            };
-
-            realm.objects('GlucoseInfo').addListener(glucoseListener);
-            realm.objects('InsulinInfo').addListener(insulinListener);
-
-            try {
-                const glucoseData = await HealthService.getGlucoses(realm);
-                const insulinData = await HealthService.getInsulins(realm);
-                
-                setGlucose(glucoseData);
-                setInsulin(insulinData);
-            } catch (error) {
-                console.error('Error fetching health data:', error);
+        const initializeRealm = async () => {
+            if (isRealmOpened.current) {
+                return;
             }
 
-            return () => {
-                realm.objects('GlucoseInfo').removeListener(glucoseListener);
-                realm.objects('InsulinInfo').removeListener(insulinListener);
-                realm.close();
-            };
+            console.log("Opening Realm...");
+            const instance = await realmOpen();
+            setRealmInstance(instance);
+            isRealmOpened.current = true;
+        }
+
+        initializeRealm();
+    }, []);
+
+    const fetchData = useCallback(async () => {
+        if (!realmInstance) {
+            return;
+        }
+
+        const glucoseData = await HealthService.getGlucoses(realmInstance);
+        const insulinData = await HealthService.getInsulins(realmInstance);
+
+        if (glucoseData && glucoseData.length > 0) {
+            setGlucose(glucoseData);
+            setLatestGlucose(glucoseData[0]);
+        }
+
+        if (insulinData && insulinData.length > 0) {
+            setInsulin(insulinData);
+        }
+    }, [realmInstance]);
+
+    useEffect(() => {
+        let timerId = null;
+
+        if (!realmInstance) {
+            return;
+        }
+
+        const glucoseListener = (glucoses, changes) => {
+            if (changes.insertions.length > 0) {
+                if (timerId !== null) {
+                    clearTimeout(timerId);
+                }
+                timerId = setTimeout(() => fetchData(), 500);
+            }
         };
 
-        fetchData();
-    }, []);
+        const insulinListener = (insulins, changes) => {
+            if (changes.insertions.length > 0) {
+                if (timerId !== null) {
+                    clearTimeout(timerId);
+                }
+                timerId = setTimeout(() => fetchData(), 500);
+            }
+        };
+
+        const glucoseObjects = realmInstance.objects('GlucoseInfo');
+        glucoseObjects.addListener(glucoseListener);
+
+        const insulinObjects = realmInstance.objects('InsulinInfo');
+        insulinObjects.addListener(insulinListener);
+
+        return () => {
+            glucoseObjects.removeListener(glucoseListener);
+            insulinObjects.removeListener(insulinListener);
+            if (timerId !== null) {
+                clearTimeout(timerId);
+            }
+        };
+    }, [realmInstance, fetchData]);
 
     return (
         <HealthContext.Provider
             value={{
                 glucose,
+                latestGlucose,
                 insulin,
             }}>
             {children}

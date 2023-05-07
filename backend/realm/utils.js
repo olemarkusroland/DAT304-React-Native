@@ -21,7 +21,7 @@ export async function isRealmFileExists(filePath) {
 export async function realmOpen() {
     try {
         const realmPath = await getRealmPath();
-        console.log("Opening Realm...");
+        console.log("Opening Realm... ",new Date());
         const realm = await Realm.open({
             path: realmPath,
             schema: schemas,

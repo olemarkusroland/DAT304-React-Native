@@ -4,12 +4,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import InformationScreen from '../../Features/Information/Screen/InformationScreen';
 import RecentFoodScreen from '../../Features/Home/Screen/FoodScreen';
 import { HealthContextProvider } from '../../services/Health/Health-Context';
-import { FoodContextProvider } from '../../services/Foods/Food-Context';
 const InformationStack = createStackNavigator();
 
 export const InformationNavigator = ({ route, navigation }) => {
     return (
-        <FoodContextProvider>
             <HealthContextProvider>
                 <InformationStack.Navigator>
                     <InformationStack.Screen
@@ -34,6 +32,5 @@ export const InformationNavigator = ({ route, navigation }) => {
                     />
                 </InformationStack.Navigator>
             </HealthContextProvider>
-        </FoodContextProvider>
     );
 };

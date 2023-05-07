@@ -7,16 +7,7 @@ import { AuthenticationContext } from '../../services/Auth/Auth-Context';
 import { AppNavigator } from './app-navigator';
 import { AccountNavigator } from './account-navigation';
 import { NavigationContainer, DefaultTheme, DarkTheme} from '@react-navigation/native';
-const MyTheme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      primary: '#FFFFFF',
-      background: '#1F456E',
-      card: '#0A1172',
-      text: '#FFFFFF',
-    },
-  };
+
 
 const Navigation = () => {
     const [realm, setRealm] = useState(null);

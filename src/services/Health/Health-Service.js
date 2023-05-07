@@ -17,7 +17,7 @@ export const HealthService = {
 
             return insulinData;
         } catch (error) {
-            console.log('Error retrieving glucose data:', error);
+            console.log('Error retrieving Insulin data:', error);
             return null;
         }
     },

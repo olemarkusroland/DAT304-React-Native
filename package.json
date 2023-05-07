@@ -32,6 +32,8 @@
     "react-native-google-fit": "^0.19.1",
     "react-native-modal-datetime-picker": "^15.0.0",
     "react-native-paper": "^5.5.2",
+    "react-native-performance": "^4.0.0",
+    "react-native-performance-monitor": "^2.0.0",
     "react-native-push-notification": "^8.1.1",
     "react-native-safe-area-context": "^4.5.0",
     "react-native-screens": "^3.20.0",
