@@ -3,6 +3,7 @@ import {Text, TextInput, TouchableOpacity, View, StyleSheet, Button} from 'react
 import {AuthenticationContext} from '../../services/Auth/Auth-Context';
 import { updateGlucose, updateGlucoseLog, deleteGlucoseTest} from '../../../backend/realm/CRUD';
 import { realmOpen } from '../../../backend/realm/utils';
+import { UseGlucoseData, UseInsulinBasalData, UseInsulinData } from '../../../backend/nightscoutAPI';
 
 export const SettingScreen = ({navigation}) => {
   const {onLogout, user} = useContext(AuthenticationContext);
@@ -22,6 +23,26 @@ export const SettingScreen = ({navigation}) => {
   const handleInputChange = (text) => {
     setAmount(text);
   };
+
+
+    function testAPI(amount) {
+        const lastMonth = new Date(Date.now() - (amount * 24 * 60 * 60 * 1000));
+        const end = Date.now();
+        const start = new Date(end).toISOString();
+        const endISO = lastMonth.toISOString();
+        const timeStart = global.nativePerformanceNow();
+        UseGlucoseData(endISO, start)
+            .then(() => {
+                const timeEnd = global.nativePerformanceNow();
+                console.log(`Test finished in: ${(timeEnd - timeStart)}ms`);
+                setTestString(`${timeEnd - timeStart}ms`);
+            });
+
+
+    }
+
+
+
 
   function testUpdateRealm(realm, amount) {
     const timeStart = global.nativePerformanceNow();
@@ -72,7 +93,23 @@ export const SettingScreen = ({navigation}) => {
       <Button
       title='Delete glucoses'
       onPress={() => testDeleteRealm(realm, amount)}>
-      </Button> 
+      </Button>
+        <Button
+            title='Test Api Speed 1'
+            onPress={() => testAPI(1)}>
+        </Button>
+        <Button
+            title='Test Api Speed 7'
+            onPress={() => testAPI(7)}>
+        </Button>
+        <Button
+            title='Test Api Speed 30'
+            onPress={() => testAPI(30)}>
+        </Button>
+        <Button
+            title='Test Api Speed 60'
+            onPress={() => testAPI(60)}>
+        </Button>
     </View>
   );
 };
