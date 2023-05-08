@@ -9,11 +9,12 @@ import {
 } from 'react-native';
 import { HealthContext } from '../../../services/Health/Health-Context';
 import InformationChart from '../../Information/Component/infograph';
+
 export const HomeScreen = ({ navigation }) => {
     const {glucose, insulin} = useContext(HealthContext);
     try {
         if (glucose.length > 0) {
-            return (
+          return (
                 <View style={styles.container}>
 {/*                   <TouchableOpacity
                         onPress={() => navigation.navigate('Info')}>
@@ -37,7 +38,6 @@ export const HomeScreen = ({ navigation }) => {
                 <View style={styles.container}>
                     <Text style={{color: 'white', fontSize: 32}}>Loading...</Text>
                     <ActivityIndicator size="large" color="#0000ff" />
-                   
                 </View>
             );
         }

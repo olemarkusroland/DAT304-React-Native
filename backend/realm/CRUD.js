@@ -85,61 +85,54 @@ export async function readLatestGlucose(realm) {
     }
 }
 
-export async function deleteGlucoseTest(realm, amount, text){
+export async function deleteGlucoseTest(realm, amount){
     if (!realm) {
         console.error('deleteGlucose: Realm instance is null');
         return;
     }
-
     const allObjects = realm.objects('GlucoseInfo');
-    //const objectsToDelete = allObjects.slice(0, amount);
-    
-    
     const timeStart = global.nativePerformanceNow();
     console.log("WRITING!!");
     await realm.write(() => {
         for (let i = 0; i < amount; i++) {
           realm.delete(allObjects[i]);
-        }
-      });
-    console.log("NOT WRITING!!");
-
-    const timeEnd = global.nativePerformanceNow();
-    console.log(`Delete Test finished in: ${timeEnd - timeStart}ms`);
-    console.log('Deleted glucoses: ', amount);
-    
+        }});
+      const timeEnd = global.nativePerformanceNow();
+      console.log('Deleted glucoses: ', amount);
+      const totaltime = timeEnd - timeStart;
+      return totaltime;
 }
 
 export async function updateGlucose(realm, amount) {
     if (!realm) {
-        console.error('updateGlucose: Realm instance is null');
-        return;
+      console.error('updateGlucose: Realm instance is null');
+      return;
     }
-
     const currentDate = new Date();
     const result = [];
-
-    // Add amount glucose entries to the result array
+  
     for (let i = 0; i < amount; i++) {
-        result.push({
-            sgv: Math.floor(Math.random() * 100) + 50, // Random glucose value between 50 and 149
-            dateString: new Date(currentDate - i * 60000).toISOString(), // Date string for the last 60 days, incremented by 1 minute
-        });
+      result.push({
+        sgv: Math.floor(Math.random() * 100) + 50, // Random glucose value between 50 and 149
+        dateString: new Date(currentDate - i * 60000).toISOString(), // Date string for the last 60 days, incremented by 1 minute
+      });
     }
     console.log('Adding ' + result.length + ' glucose entries.');
     const timeStart = global.nativePerformanceNow();
     await realm.write(() => {
-        for (const glucoseInfo of result) {
-            realm.create('GlucoseInfo', {
-                glucose: glucoseInfo.sgv,
-                timestamp: glucoseInfo.dateString,
-            });
-        }
+      for (const glucoseInfo of result) {
+        realm.create('GlucoseInfo', {
+          glucose: glucoseInfo.sgv,
+          timestamp: glucoseInfo.dateString,
+        });
+      }
     });
     const timeEnd = global.nativePerformanceNow();
     console.log(`Realm write time spent: ${timeEnd - timeStart}ms`);
-}
-
+    const totaltime = timeEnd - timeStart;
+    return totaltime;
+  }
+  
 
 export async function readInsulins(realm, fromDate, toDate) {
     try {
@@ -699,3 +692,9 @@ export async function deleteAllExercises(realm) {
         realm.delete(allEntries);
     });
 }
+
+export async function exampleFoods(realm) {
+    await createOrUpdateFood(realm, "Example food 1", 1000, 100, 10, 1);
+    await createOrUpdateFood(realm, "Example food 2", 2000, 200, 20, 2);
+    await createOrUpdateFood(realm, "Example food 3", 3000, 300, 30, 3);
+  }

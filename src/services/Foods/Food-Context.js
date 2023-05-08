@@ -56,7 +56,7 @@ export const FoodContextProvider = ({ children }) => {
             const foods = await getFoods();
             setFoods(foods);
             setFilteredFoods(foods);
-            console.log('Foods fetched successfully', foods);
+            //console.log('Foods fetched successfully', foods);
         } catch (error) {
             console.error('Error fetching foods:', error);
         }
@@ -75,6 +75,8 @@ export const FoodContextProvider = ({ children }) => {
         } else {
             setFilteredFoods([]);
         }
+        const timeEnd = global.nativePerformanceNow();
+        console.log("RERENDERING: ", timeEnd);
     }, [searchKeyword, foods]);
 
     const onSearch = debounce(newSearchKeyword => {

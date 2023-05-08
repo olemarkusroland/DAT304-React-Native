@@ -1,20 +1,18 @@
 import React, {useContext, useState} from 'react';
 import {Text, TextInput, TouchableOpacity, View, StyleSheet, Button} from 'react-native';
 import {AuthenticationContext} from '../../services/Auth/Auth-Context';
-import { updateGlucose, updateGlucoseLog, deleteGlucoseTest} from '../../../backend/realm/CRUD';
+import { updateGlucose, updateGlucoseLog, deleteGlucoseTest, createOrUpdateFood} from '../../../backend/realm/CRUD';
 import { realmOpen } from '../../../backend/realm/utils';
 
 export const SettingScreen = ({navigation}) => {
   const {onLogout, user} = useContext(AuthenticationContext);
   const [realm, setRealm] = useState(null);
-  const [testString, setTestString] = useState('');
+  const [testString, setTestString] = useState('Placeholder');
   const [amount, setAmount] = useState('');
-
   const initializeRealm = async () => {
     const r = await realmOpen();
     setRealm(r);
 };
-
   const handleLogout = () => {
     onLogout();
   };
@@ -23,27 +21,27 @@ export const SettingScreen = ({navigation}) => {
     setAmount(text);
   };
 
-  function testUpdateRealm(realm, amount) {
-    const timeStart = global.nativePerformanceNow();
-    updateGlucose(realm, amount);
-    const timeEnd = global.nativePerformanceNow();
-    console.log(`Test finished in: ${timeEnd - timeStart}ms`);
+  async function testUpdateRealm(realm, amount) {
+    const totaltime = await updateGlucose(realm, amount);
     realm.close();
     console.log("glucose amount added: ", amount);
-    setTestString(`${timeEnd - timeStart}ms`);
-    
+    setTestString(`${totaltime}ms`);
   }
-   function testDeleteRealm(realm, amount) {
-    const timeStart = global.nativePerformanceNow();
-    deleteGlucoseTest(realm, amount);
-    const timeEnd = global.nativePerformanceNow();
-    console.log(`Test finished in: ${timeEnd - timeStart}ms`);
+
+  async function testDeleteRealm(realm, amount) {
+    const totaltime = await deleteGlucoseTest(realm, amount);
     realm.close();
     console.log("glucose amount deleted: ", amount);
-    setTestString(`${timeEnd - timeStart}ms`);
-    
+    setTestString(`${totaltime}ms`);
+}
+  async function addFood(realm, amount){
+    for (let i = 1; i <= amount; i++) {
+      await createOrUpdateFood(realm, `Example food ${i}`, i * 1000, i * 100, i * 10, i);
+    }
+    console.log("Added Food");
   }
-  
+//const hello = updateGlucose(realm, 10);
+
   return (
     <View style={styles.container}>
       {/* Other settings components can be added here */}
@@ -62,6 +60,10 @@ export const SettingScreen = ({navigation}) => {
       onPress={() => console.log("hello")}>
       </Button>
       <Button
+      title='Add food amount'
+      onPress={() => console.log(addFood(realm, amount))}>
+      </Button>
+      <Button
       title='init realm'
       onPress={() => initializeRealm()}>
       </Button>
@@ -71,7 +73,7 @@ export const SettingScreen = ({navigation}) => {
       </Button>
       <Button
       title='Delete glucoses'
-      onPress={() => testDeleteRealm(realm, amount)}>
+      onPress={() =>testDeleteRealm(realm, amount)}>
       </Button> 
     </View>
   );
