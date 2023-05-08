@@ -3,6 +3,7 @@ import {Text, TextInput, TouchableOpacity, View, StyleSheet, Button} from 'react
 import {AuthenticationContext} from '../../services/Auth/Auth-Context';
 import { updateGlucose, updateGlucoseLog, deleteGlucoseTest, createOrUpdateFood} from '../../../backend/realm/CRUD';
 import { realmOpen } from '../../../backend/realm/utils';
+import { UseGlucoseData, UseInsulinBasalData, UseInsulinData } from '../../../backend/nightscoutAPI';
 
 export const SettingScreen = ({navigation}) => {
   const {onLogout, user} = useContext(AuthenticationContext);
@@ -20,6 +21,19 @@ export const SettingScreen = ({navigation}) => {
   const handleInputChange = (text) => {
     setAmount(text);
   };
+  function testAPI(amount) {
+    const lastMonth = new Date(Date.now() - (amount * 24 * 60 * 60 * 1000));
+    const end = Date.now();
+    const start = new Date(end).toISOString();
+    const endISO = lastMonth.toISOString();
+    const timeStart = global.nativePerformanceNow();
+    UseGlucoseData(endISO, start)
+        .then(() => {
+            const timeEnd = global.nativePerformanceNow();
+            console.log(`Test finished in: ${(timeEnd - timeStart)}ms`);
+            setTestString(`${timeEnd - timeStart}ms`);
+        });
+  }
 
   async function testUpdateRealm(realm, amount) {
     const totaltime = await updateGlucose(realm, amount);
@@ -56,6 +70,10 @@ export const SettingScreen = ({navigation}) => {
         style={styles.consoleText}
       />
       <Button
+      title='init realm'
+      onPress={() => initializeRealm()}>
+      </Button>
+      <Button
       title='Just a button'
       onPress={() => console.log("hello")}>
       </Button>
@@ -64,17 +82,17 @@ export const SettingScreen = ({navigation}) => {
       onPress={() => console.log(addFood(realm, amount))}>
       </Button>
       <Button
-      title='init realm'
-      onPress={() => initializeRealm()}>
-      </Button>
-      <Button
       title='Add glucoses'
       onPress={() => testUpdateRealm(realm, amount)}>
       </Button>
       <Button
       title='Delete glucoses'
-      onPress={() =>testDeleteRealm(realm, amount)}>
-      </Button> 
+      onPress={() => testDeleteRealm(realm, amount)}>
+      </Button>
+        <Button
+            title='Test Api Speed'
+            onPress={() => testAPI(amount)}>
+        </Button>
     </View>
   );
 };
